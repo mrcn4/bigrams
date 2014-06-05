@@ -8,7 +8,13 @@ public class WordStats {
 	
 	public WordStats() {
 	}
-
+	
+	public WordStats(Long wordCount, Long sentenceCount, Double tfidf) {
+		this.wordCount = wordCount;
+		this.sentenceCount = sentenceCount;
+		this.tfidf = tfidf;
+	}
+	
 	public Long getWordCount() {
 		return wordCount;
 	}

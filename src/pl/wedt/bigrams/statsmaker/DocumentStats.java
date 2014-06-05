@@ -8,11 +8,16 @@ import pl.wedt.bigrams.dataprovider.Word;
 
 
 public class DocumentStats {
-	private Document doc;
+	private String docName;
 	private Map<String, WordStats> wordStats;
 	
 	public DocumentStats(Document doc) {
-		this.doc = doc;
+		this.docName = doc.getName();
+		this.wordStats = new HashMap<>();
+	}
+	
+	public DocumentStats(String docName) {
+		this.docName = docName;
 		this.wordStats = new HashMap<>();
 	}
 	
@@ -21,7 +26,7 @@ public class DocumentStats {
 	}
 	
 	public String getDocName() {
-		return doc.getName();
+		return docName;
 	}
 	
 }
