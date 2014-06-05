@@ -4,10 +4,14 @@ import java.io.ObjectInputStream.GetField;
 import java.util.List;
 import java.util.Scanner;
 
+import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
+
 
 public class MainClass {
 	
-	public static void main(String[] args) {
+	public void interactiveTest()
+	{
 		String end = "q";
 		String input = "";
 		
@@ -15,15 +19,18 @@ public class MainClass {
 		System.out.println("Enter q to quit, enter word to see it's stem");
 		
 		Scanner sc = new Scanner(System.in);
-		StanfordLemmatizer lemmatizer = new StanfordLemmatizer();
 		do{
-			input = sc.next();
-			System.out.println("Stem for \"" + input + "\" is " + lemmatizer.lemmatize(input));
+			input = sc.nextLine();
+			System.out.println("Stem for \"" + input + "\" is " + StanfordLemmatizer.lemmatize(input));
 		}
 		while(!input.equals(end));
-		
-		
-		
+		sc.close();
+	}
+	
+	public static void main(String[] args) {
+		DataProvider dataProvider = new DataProvider();
+		PrintStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
+		printStatsMaker.printStats();
 	}
 
 }

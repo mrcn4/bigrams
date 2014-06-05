@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Properties;
 
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.logging.RedwoodConfiguration;
 
-class StanfordLemmatizer {
+public class StanfordLemmatizer {
 
-	protected StanfordCoreNLP pipeline;
+	protected static StanfordCoreNLP pipeline;
 
-	public StanfordLemmatizer() {
+	static {
 		// Create StanfordCoreNLP object properties, with POS tagging
 		// (required for lemmatization), and lemmatization
 		Properties props;
@@ -28,28 +28,44 @@ class StanfordLemmatizer {
 		
 		// StanfordCoreNLP loads a lot of models, so you probably
 		// only want to do this once per execution
-		this.pipeline = new StanfordCoreNLP(props);
+		pipeline = new StanfordCoreNLP(props);
 		
 		//RedwoodConfiguration.current().clear().apply();
 	}
-
-	public List<String> lemmatize(String documentText) {
-		List<String> lemmas = new LinkedList<String>();
-
+	
+	public static List<CoreMap> getSentences(String documentText)
+	{
 		// create an empty Annotation just with the given text
 		Annotation document = new Annotation(documentText);
 
 		// run all Annotators on this text
-		this.pipeline.annotate(document);
+		pipeline.annotate(document);
 
 		// Iterate over all of the sentences found
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		return document.get(SentencesAnnotation.class);
+	}
+
+	public static List<CoreLabel> getWords(CoreMap sentence)
+	{
+		return sentence.get(TokensAnnotation.class);
+	}
+	
+	public static List<String> lemmatize(String documentText) {
+		List<String> lemmas = new LinkedList<String>();
+
+		List<CoreMap> sentences = getSentences(documentText);
+		
 		for (CoreMap sentence : sentences) {
+			
+			System.out.println("Sentence: " + sentence.toString());
+			
 			// Iterate over all tokens in a sentence
 			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
 				// Retrieve and add the lemma for each word into the
 				// list of lemmas
-				lemmas.add(token.get(LemmaAnnotation.class));
+				System.out.println("Token: " + token.toString());
+				System.out.println("Lemma: " + token.get(LemmaAnnotation.class));
+				System.out.println("POS: " + token.get(PartOfSpeechAnnotation.class));
 			}
 		}
 

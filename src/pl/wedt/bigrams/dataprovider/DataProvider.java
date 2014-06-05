@@ -6,7 +6,6 @@ import java.util.List;
 
 public class DataProvider {
 	
-	private List<File> listOfFiles;
 	private File directory;
 
 	/**
@@ -24,7 +23,7 @@ public class DataProvider {
 	public List<Document> getDocuments()
 	{
 		LinkedList<Document> listOfDocs = new LinkedList<Document>();
-		listOfFiles = new LinkedList<File>();
+		new LinkedList<File>();
 		for(File f: directory.listFiles())
 		{
 			if(f.isFile())
