@@ -1,0 +1,37 @@
+package pl.wedt.bigrams.statsmaker;
+
+public class WordStats {
+	
+	private Long wordCount = 0L;
+	private Long sentenceCount = 0L;
+	private Double tfidf = 0.0d;
+	
+	public WordStats() {
+	}
+
+	public Long getWordCount() {
+		return wordCount;
+	}
+
+	public void setWordCount(Long wordCount) {
+		this.wordCount = wordCount;
+	}
+
+	public Long getSentenceCount() {
+		return sentenceCount;
+	}
+
+	public void setSentenceCount(Long sentenceCount) {
+		this.sentenceCount = sentenceCount;
+	}
+
+	public Double getTfidf() {
+		return tfidf;
+	}
+
+	public void setTfidf(Double tfidf) {
+		this.tfidf = tfidf;
+	}
+	
+	
+}

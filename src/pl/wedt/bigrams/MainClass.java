@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 
 
@@ -29,8 +30,8 @@ public class MainClass {
 	
 	public static void main(String[] args) {
 		DataProvider dataProvider = new DataProvider();
-		PrintStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
-		printStatsMaker.printStats();
+		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
+		printStatsMaker.computeStats();
 	}
 
 }
