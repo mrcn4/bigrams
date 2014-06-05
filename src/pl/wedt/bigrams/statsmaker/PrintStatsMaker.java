@@ -2,8 +2,10 @@ package pl.wedt.bigrams.statsmaker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.Document;
@@ -12,15 +14,40 @@ import pl.wedt.bigrams.dataprovider.Word;
 
 public class PrintStatsMaker implements IStatsMaker {
 	private DataProvider dp;
-	private Map<String, Long> globalCount;
-	private Map<String, Long> sentenceCount;
+	private Long globalSentenceCount;
+	
+	//single words
+	private Map<String, Long> globalCount; // liczba wystąpień słowa w repozytorium
+	private Map<String, Long> sentenceCount; // liczba zdań, w których dane słowo wystąpiło, w repozytorium
 	private List<DocumentStats> docStats;
+	private Map<String, Long> documentFreq;
 	private Long globalWordCount;
+	
+	//bigrams
+	private Map<String, Long> bigramCount;
+	private Map<String, Long> sentenceBigramCount;
+	private List<DocumentStats> docBigramStats;
+	private Map<String, Long> documentBigramFreq;
+	private Long globalBigramCount;
+	
+	//funny bigrams
+	private Map<String, Long> funnyBigramCount;
+	private Map<String, Long> sentenceFunnyBigramCount;
+	private List<DocumentStats> docFunnyBigramStats;
+	private Map<String, Long> documentFunnyBigramFreq;
+	private Long globalFunnyBigramCount;
 
 	public PrintStatsMaker(DataProvider dp) {
 		this.dp = dp;
+		this.globalSentenceCount = 0L;
+		
 		this.globalCount = new HashMap<>();
+		this.sentenceCount = new HashMap<>();
 		this.docStats = new ArrayList<>();
+		this.documentFreq = new HashMap<>();
+		this.globalWordCount = 0L;
+		
+		//
 	}
 	
 	
@@ -34,23 +61,63 @@ public class PrintStatsMaker implements IStatsMaker {
 		//get documents
 		List<Document> documents = dp.getDocuments();
 		
-		//get first doc and print its name
-		Document doc = documents.get(0);
-		System.out.println(doc.getName());
-		
-		//print sentences
-		for(Sentence s: doc.getSentences())
-		{
-			//System.out.println("Sentence: " + s.toString());
-			System.out.print("Sentence in basic forms: ");
-			for(Word w: s.getWords())
-			{
-				System.out.print(w.getBasicForm() + "(" + w.getPOS() + ") ");
+		for (Document doc : documents) {
+			DocumentStats ds = new DocumentStats(doc);
+			Set<Word> uniqueWords = new HashSet<Word>();
+			
+			for(Sentence s: doc.getSentences()) {
+				globalSentenceCount++;
+				for(Word w: s.getWords()) {	
+					uniqueWords.add(w);
+					
+					WordStats ws = ds.getWordStats().get(getWord(w));
+					if (ws == null) {
+						ws = new WordStats();
+					}
+					
+					globalWordCount++;
+					
+					Long wordGlobalCount = globalCount.get(getWord(w));
+					if (wordGlobalCount == null) {
+						wordGlobalCount = 0L;
+					}
+					globalCount.put(getWord(w), wordGlobalCount+1);
+					
+					Long wordDocumentCount = ws.getWordCount();
+					if (wordDocumentCount == null) {
+						wordDocumentCount = 0L;
+					}
+					ws.setWordCount(wordDocumentCount+1);
+					
+					ds.getWordStats().put(getWord(w), ws);
+				}
+				
+				Set<Word> uniqueSentenceWords = new HashSet<>(s.getWords());
+				
+				for(Word w: uniqueSentenceWords) {
+					
+					WordStats ws = ds.getWordStats().get(getWord(w));
+					
+					Long sentenceGlobalCount = sentenceCount.get(getWord(w));
+					if (sentenceGlobalCount == null) {
+						sentenceGlobalCount = 0L;
+					}
+					sentenceCount.put(getWord(w), sentenceGlobalCount+1);
+					
+					Long sentenceDocumentCount = ws.getSentenceCount();
+					if (sentenceDocumentCount == null) {
+						sentenceDocumentCount = 0L;
+					}
+					ws.setSentenceCount(sentenceDocumentCount+1);
+				}
 			}
-			System.out.println();
+			docStats.add(ds);
+			
+			
 		}
 	}
 
+	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
 
 	/* (non-Javadoc)
@@ -129,5 +196,237 @@ public class PrintStatsMaker implements IStatsMaker {
 	@Override
 	public void setGlobalWordCount(Long globalWordCount) {
 		this.globalWordCount = globalWordCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentFreq()
+	 */
+	@Override
+	public Map<String, Long> getDocumentFreq() {
+		return documentFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setDocumentFreq(java.util.Map)
+	 */
+	@Override
+	public void setDocumentFreq(Map<String, Long> documentFreq) {
+		this.documentFreq = documentFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getBigramCount()
+	 */
+	@Override
+	public Map<String, Long> getBigramCount() {
+		return bigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setBigramCount(java.util.Map)
+	 */
+	@Override
+	public void setBigramCount(Map<String, Long> bigramCount) {
+		this.bigramCount = bigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getSentenceBigramCount()
+	 */
+	@Override
+	public Map<String, Long> getSentenceBigramCount() {
+		return sentenceBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setSentenceBigramCount(java.util.Map)
+	 */
+	@Override
+	public void setSentenceBigramCount(Map<String, Long> sentenceBigramCount) {
+		this.sentenceBigramCount = sentenceBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocBigramStats()
+	 */
+	@Override
+	public List<DocumentStats> getDocBigramStats() {
+		return docBigramStats;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setDocBigramStats(java.util.List)
+	 */
+	@Override
+	public void setDocBigramStats(List<DocumentStats> docBigramStats) {
+		this.docBigramStats = docBigramStats;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentBigramFreq()
+	 */
+	@Override
+	public Map<String, Long> getDocumentBigramFreq() {
+		return documentBigramFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setDocumentBigramFreq(java.util.Map)
+	 */
+	@Override
+	public void setDocumentBigramFreq(Map<String, Long> documentBigramFreq) {
+		this.documentBigramFreq = documentBigramFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getGlobalBigramCount()
+	 */
+	@Override
+	public Long getGlobalBigramCount() {
+		return globalBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setGlobalBigramCount(java.lang.Long)
+	 */
+	@Override
+	public void setGlobalBigramCount(Long globalBigramCount) {
+		this.globalBigramCount = globalBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getFunnyBigramCount()
+	 */
+	@Override
+	public Map<String, Long> getFunnyBigramCount() {
+		return funnyBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setFunnyBigramCount(java.util.Map)
+	 */
+	@Override
+	public void setFunnyBigramCount(Map<String, Long> funnyBigramCount) {
+		this.funnyBigramCount = funnyBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getSentenceFunnyBigramCount()
+	 */
+	@Override
+	public Map<String, Long> getSentenceFunnyBigramCount() {
+		return sentenceFunnyBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setSentenceFunnyBigramCount(java.util.Map)
+	 */
+	@Override
+	public void setSentenceFunnyBigramCount(Map<String, Long> sentenceFunnyBigramCount) {
+		this.sentenceFunnyBigramCount = sentenceFunnyBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocFunnyBigramStats()
+	 */
+	@Override
+	public List<DocumentStats> getDocFunnyBigramStats() {
+		return docFunnyBigramStats;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setDocFunnyBigramStats(java.util.List)
+	 */
+	@Override
+	public void setDocFunnyBigramStats(List<DocumentStats> docFunnyBigramStats) {
+		this.docFunnyBigramStats = docFunnyBigramStats;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentFunnyBigramFreq()
+	 */
+	@Override
+	public Map<String, Long> getDocumentFunnyBigramFreq() {
+		return documentFunnyBigramFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setDocumentFunnyBigramFreq(java.util.Map)
+	 */
+	@Override
+	public void setDocumentFunnyBigramFreq(Map<String, Long> documentFunnyBigramFreq) {
+		this.documentFunnyBigramFreq = documentFunnyBigramFreq;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getGlobalFunnyBigramCount()
+	 */
+	@Override
+	public Long getGlobalFunnyBigramCount() {
+		return globalFunnyBigramCount;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#setGlobalFunnyBigramCount(java.lang.Long)
+	 */
+	@Override
+	public void setGlobalFunnyBigramCount(Long globalFunnyBigramCount) {
+		this.globalFunnyBigramCount = globalFunnyBigramCount;
+	}
+
+
+
+	public Long getGlobalSentenceCount() {
+		return globalSentenceCount;
+	}
+
+
+
+	public void setGlobalSentenceCount(Long globalSentenceCount) {
+		this.globalSentenceCount = globalSentenceCount;
 	}
 }

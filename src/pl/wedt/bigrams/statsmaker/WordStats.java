@@ -2,8 +2,8 @@ package pl.wedt.bigrams.statsmaker;
 
 public class WordStats {
 	
-	private Long wordCount = 0L;
-	private Long sentenceCount = 0L;
+	private Long wordCount = 0L; // liczba wystąpienia słowa w dokumencie
+	private Long sentenceCount = 0L; // liczba zdań, w których wystąpiło słowo, w dokumencie
 	private Double tfidf = 0.0d;
 	
 	public WordStats() {
