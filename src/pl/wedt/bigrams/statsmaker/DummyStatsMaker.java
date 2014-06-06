@@ -5,28 +5,67 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.gui.BigramsGUI;
 
 public class DummyStatsMaker implements IStatsMaker{
+	private Long globalSentenceCount;
+	
 	private Map<String, Long> globalCount;
-	private List<DocumentStats> docStats;
 	private Map<String, Long> sentenceCount;
+	private List<DocumentStats> docStats;
+	private Map<String, Long> documentFreq;
 	private Long globalWordCount;
 
+	//bigrams
+	private Map<String, Long> bigramCount;
+	private Map<String, Long> sentenceBigramCount;
+	private List<DocumentStats> docBigramStats;
+	private Map<String, Long> documentBigramFreq;
+	private Long globalBigramCount;
+	
+	//funny bigrams
+	private Map<String, Long> funnyBigramCount;
+	private Map<String, Long> sentenceFunnyBigramCount;
+	private List<DocumentStats> docFunnyBigramStats;
+	private Map<String, Long> documentFunnyBigramFreq;
+	private Long globalFunnyBigramCount;
+	
+
+	private static Logger log = Logger.getLogger(DummyStatsMaker.class);
+	
+
 	public DummyStatsMaker() {
+		this.globalSentenceCount = 0L;
+		
 		this.globalCount = new HashMap<>();
 		this.docStats = new ArrayList<>();
 		this.sentenceCount = new HashMap<>();
-		this.globalWordCount = 0l;
+		this.documentFreq = new HashMap<>();
+		this.globalWordCount = 0L;
+		
+		this.bigramCount = new HashMap<>();
+		this.sentenceBigramCount = new HashMap<>();
+		this.docBigramStats = new ArrayList<>();
+		this.documentBigramFreq = new HashMap<>();
+		this.globalBigramCount = 0L;
+		
+		this.funnyBigramCount = new HashMap<>();
+		this.sentenceFunnyBigramCount = new HashMap<>();
+		this.docFunnyBigramStats = new ArrayList<>();
+		this.documentFunnyBigramFreq = new HashMap<>();
+		this.globalFunnyBigramCount = 0L;
 	}
 	
 	
 	@Override
 	public void computeStats() {
-		//"No! Try not. Do, or do not. There is no try.";
 		String sentence1 = "We become what we think about";
 		String sentence2 = "The mind is everything. What you think you become.";
 		
+		//wordcounts
 		globalCount.put("we", 2L);
 		globalCount.put("become", 2L);
 		globalCount.put("what", 2L);
@@ -49,77 +88,268 @@ public class DummyStatsMaker implements IStatsMaker{
 		sentenceCount.put("everything", 1L);
 		sentenceCount.put("you", 1L);
 		
+		documentFreq.put("we", 1L);
+		documentFreq.put("become", 2L);
+		documentFreq.put("what", 2L);
+		documentFreq.put("think", 2L);
+		documentFreq.put("about", 1L);
+		documentFreq.put("the", 1L);
+		documentFreq.put("mind", 1L);
+		documentFreq.put("is", 1L);
+		documentFreq.put("everything", 1L);
+		documentFreq.put("you", 1L);
+		
 		DocumentStats documentStats1 = new DocumentStats("Earl Nightingale");
 		Map<String, WordStats> wordStats1 = documentStats1.getWordStats();
-		//"we"
 		wordStats1.put("we", new WordStats(2L, 1L, 1.0d));
 		wordStats1.put("become", new WordStats(1L, 1L, 1.0d));
 		wordStats1.put("what", new WordStats(1L, 1L, 1.0d));
 		wordStats1.put("think", new WordStats(1L, 1L, 1.0d));
 		wordStats1.put("about", new WordStats(1L, 1L, 1.0d));
-		
 		docStats.add(documentStats1);
 		
-		DocumentStats documentStats2 = new DocumentStats("Earl Nightingale");
-		Map<String, WordStats> wordStats2 = documentStats1.getWordStats();
-		//"we"
+		DocumentStats documentStats2 = new DocumentStats("Buddha");
+		Map<String, WordStats> wordStats2 = documentStats2.getWordStats();
 		wordStats2.put("the", new WordStats(2L, 1L, 1.0d));
 		wordStats2.put("mind", new WordStats(1L, 1L, 1.0d));
 		wordStats2.put("is", new WordStats(1L, 1L, 1.0d));
 		wordStats2.put("everything", new WordStats(1L, 1L, 1.0d));
 		wordStats2.put("become", new WordStats(1L, 1L, 1.0d));
-		
 		docStats.add(documentStats2);
 		
+		log.debug(documentStats2);
 		
+		globalWordCount = 15L; 
+		
+		
+		//bigram counts
+		bigramCount.put("we become", 1L);
+		bigramCount.put("become what", 1L);
+		bigramCount.put("what we", 1L);
+		bigramCount.put("we think", 1L);
+		bigramCount.put("think about", 1L);
+		bigramCount.put("The mind", 1L);
+		bigramCount.put("mind is", 1L);
+		bigramCount.put("is everything", 1L);
+		bigramCount.put("what you", 1L);
+		bigramCount.put("you think", 1L);
+		bigramCount.put("think you", 1L);
+		bigramCount.put("you become", 1L);
+		
+		sentenceBigramCount.put("we become", 1L);
+		sentenceBigramCount.put("become what", 1L);
+		sentenceBigramCount.put("what we", 1L);
+		sentenceBigramCount.put("we think", 1L);
+		sentenceBigramCount.put("think about", 1L);
+		sentenceBigramCount.put("the mind", 1L);
+		sentenceBigramCount.put("mind is", 1L);
+		sentenceBigramCount.put("is everything", 1L);
+		sentenceBigramCount.put("what you", 1L);
+		sentenceBigramCount.put("you think", 1L);
+		sentenceBigramCount.put("think you", 1L);
+		sentenceBigramCount.put("you become", 1L);
+		
+		documentBigramFreq.put("we become", 1L);
+		documentBigramFreq.put("become what", 1L);
+		documentBigramFreq.put("what we", 1L);
+		documentBigramFreq.put("we think", 1L);
+		documentBigramFreq.put("think about", 1L);
+		documentBigramFreq.put("the mind", 1L);
+		documentBigramFreq.put("mind is", 1L);
+		documentBigramFreq.put("is everything", 1L);
+		documentBigramFreq.put("what you", 1L);
+		documentBigramFreq.put("you think", 1L);
+		documentBigramFreq.put("think you", 1L);
+		documentBigramFreq.put("you become", 1L);
+		
+		DocumentStats documentBigramStats1 = new DocumentStats("Earl Nightingale");
+		Map<String, WordStats> wordBigramStats1 = documentBigramStats1.getWordStats();
+		wordBigramStats1.put("we become", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats1.put("become what", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats1.put("what we", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats1.put("we think", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats1.put("think about", new WordStats(1L, 1L, 1.0d));
+		docBigramStats.add(documentBigramStats1);
+		
+		DocumentStats documentBigramStats2 = new DocumentStats("Buddha");
+		Map<String, WordStats> wordBigramStats2 = documentBigramStats2.getWordStats();
+		wordBigramStats2.put("the mind", new WordStats(2L, 1L, 1.0d));
+		wordBigramStats2.put("mind is", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats2.put("is everything", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats2.put("what you", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats2.put("you think", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats2.put("think you", new WordStats(1L, 1L, 1.0d));
+		wordBigramStats2.put("you become", new WordStats(1L, 1L, 1.0d));
+		docBigramStats.add(documentBigramStats2);
+		
+		globalBigramCount = 12L;
+		
+		//TODO: funnyBigramcounts
 	}
 
 	@Override
 	public Map<String, Long> getGlobalCount() {
 		
-		return null;
+		return globalCount;
 	}
 
 	@Override
 	public void setGlobalCount(Map<String, Long> globalCount) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public Map<String, Long> getSentenceCount() {
-		// TODO Auto-generated method stub
-		return null;
+		return sentenceCount;
 	}
 
 	@Override
 	public void setSentenceCount(Map<String, Long> sentenceCount) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public List<DocumentStats> getDocStats() {
-		// TODO Auto-generated method stub
-		return null;
+		return docStats;
 	}
 
 	@Override
 	public void setDocStats(List<DocumentStats> docStats) {
-		// TODO Auto-generated method stub
-		
+		this.docStats = docStats;
 	}
 
 	@Override
 	public Long getGlobalWordCount() {
-		// TODO Auto-generated method stub
-		return null;
+		return globalWordCount;
 	}
 
 	@Override
 	public void setGlobalWordCount(Long globalWordCount) {
-		// TODO Auto-generated method stub
+		this.globalWordCount = globalWordCount;
+	}
+
+	@Override
+	public Map<String, Long> getDocumentFreq() {
 		
+		return documentFreq;
+	}
+
+
+	@Override
+	public Long getGlobalSentenceCount() {
+		return globalSentenceCount;
+	}
+
+
+	@Override
+	public void setGlobalSentenceCount(Long globalSentenceCount) {
+		this.globalSentenceCount = globalSentenceCount;
+		
+	}
+	
+
+	public Map<String, Long> getBigramCount() {
+		return bigramCount;
+	}
+
+
+	public void setBigramCount(Map<String, Long> bigramCount) {
+		this.bigramCount = bigramCount;
+	}
+
+
+	public Map<String, Long> getSentenceBigramCount() {
+		return sentenceBigramCount;
+	}
+
+
+	public void setSentenceBigramCount(Map<String, Long> sentenceBigramCount) {
+		this.sentenceBigramCount = sentenceBigramCount;
+	}
+
+
+	public List<DocumentStats> getDocBigramStats() {
+		return docBigramStats;
+	}
+
+
+	public void setDocBigramStats(List<DocumentStats> docBigramStats) {
+		this.docBigramStats = docBigramStats;
+	}
+
+
+	public Map<String, Long> getDocumentBigramFreq() {
+		return documentBigramFreq;
+	}
+
+
+	public void setDocumentBigramFreq(Map<String, Long> documentBigramFreq) {
+		this.documentBigramFreq = documentBigramFreq;
+	}
+
+
+	public Long getGlobalBigramCount() {
+		return globalBigramCount;
+	}
+
+
+	public void setGlobalBigramCount(Long globalBigramCount) {
+		this.globalBigramCount = globalBigramCount;
+	}
+
+
+	public Map<String, Long> getFunnyBigramCount() {
+		return funnyBigramCount;
+	}
+
+
+	public void setFunnyBigramCount(Map<String, Long> funnyBigramCount) {
+		this.funnyBigramCount = funnyBigramCount;
+	}
+
+
+	public Map<String, Long> getSentenceFunnyBigramCount() {
+		return sentenceFunnyBigramCount;
+	}
+
+
+	public void setSentenceFunnyBigramCount(
+			Map<String, Long> sentenceFunnyBigramCount) {
+		this.sentenceFunnyBigramCount = sentenceFunnyBigramCount;
+	}
+
+
+	public List<DocumentStats> getDocFunnyBigramStats() {
+		return docFunnyBigramStats;
+	}
+
+
+	public void setDocFunnyBigramStats(List<DocumentStats> docFunnyBigramStats) {
+		this.docFunnyBigramStats = docFunnyBigramStats;
+	}
+
+
+	public Map<String, Long> getDocumentFunnyBigramFreq() {
+		return documentFunnyBigramFreq;
+	}
+
+
+	public void setDocumentFunnyBigramFreq(Map<String, Long> documentFunnyBigramFreq) {
+		this.documentFunnyBigramFreq = documentFunnyBigramFreq;
+	}
+
+
+	public Long getGlobalFunnyBigramCount() {
+		return globalFunnyBigramCount;
+	}
+
+
+	public void setGlobalFunnyBigramCount(Long globalFunnyBigramCount) {
+		this.globalFunnyBigramCount = globalFunnyBigramCount;
+	}
+
+
+	public void setDocumentFreq(Map<String, Long> documentFreq) {
+		this.documentFreq = documentFreq;
 	}
 	
 }

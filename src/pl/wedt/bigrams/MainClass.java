@@ -29,6 +29,7 @@ public class MainClass {
 	}
 	
 	public static void main(String[] args) {
+		
 		DataProvider dataProvider = new DataProvider();
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
 		printStatsMaker.computeStats();

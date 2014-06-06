@@ -39,5 +39,11 @@ public class WordStats {
 		this.tfidf = tfidf;
 	}
 	
+	@Override
+	public String toString() {
+		return "WordStats [wordCount = " + wordCount +"; " + 
+						"sentenceCount = " + sentenceCount +"; " +
+						"tfidf = " + tfidf +"]";
+	}
 	
 }

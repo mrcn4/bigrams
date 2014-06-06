@@ -29,4 +29,10 @@ public class DocumentStats {
 		return docName;
 	}
 	
+	@Override
+	public String toString() {
+		return "DocumentStats [docName=" + docName +
+				"; wordStats=" + wordStats + "]";
+	}
+	
 }
