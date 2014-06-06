@@ -58,12 +58,26 @@ public class BigramsGUI extends JFrame {
 	public BigramsGUI(final IStatsMaker statsMaker) {
 		this.statsMaker = statsMaker;
 		initUI();
+		computeStats();
+	}
 	
+	private void switchGUIAvailabilityWhileComputing(boolean enable)
+	{
+		
+	}
+	
+	/**
+	 * fixme - synchronize
+	 */
+	private synchronized void computeStats()
+	{
+		switchGUIAvailabilityWhileComputing(false);
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				//wait for it
+				
 				
 				ArrayList<String> arrayList = new ArrayList<String>();
 				arrayList.add("Wait while stats are computed...");
@@ -79,10 +93,13 @@ public class BigramsGUI extends JFrame {
 				updateRightList(arrayListEmpty);
 				
 				updateStats();
+				
+				switchGUIAvailabilityWhileComputing(true);
 			}
 			
 		});
 		thread.start();
+		
 	}
 	
 	private void updateStats()
@@ -183,7 +200,7 @@ public class BigramsGUI extends JFrame {
 					Map<String, WordStats> rightStats = null;
 					for(DocumentStats ds: docStats)
 					{
-						if(name.equals(ds.getDocName()))
+						if(ds.getDocName().equals(name))
 						{
 							rightStats = ds.getWordStats();
 							break;
