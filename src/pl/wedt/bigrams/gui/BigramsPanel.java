@@ -81,10 +81,8 @@ public class BigramsPanel extends JPanel {
 
 		// init list on scroll pane
 		leftlist = new SortingTable();
-
-		JScrollPane leftpane = new JScrollPane();
-		leftpane.getViewport().add(leftlist);
-		leftPanel.add(leftpane);
+		leftPanel.add(leftlist);
+		
 		// endof leftPanel
 
 		// centerpanel
@@ -121,11 +119,10 @@ public class BigramsPanel extends JPanel {
 		rightPanel.add(rightlabel);
 
 		// init list on scroll pane
-		rightlist = new SortingTable();
 
-		JScrollPane rightpane = new JScrollPane();
-		rightpane.getViewport().add(rightlist);
-		rightPanel.add(rightpane);
+		rightlist = new SortingTable();
+		rightPanel.add(rightlist);
+		
 		// endof rightPanel
 	}
 

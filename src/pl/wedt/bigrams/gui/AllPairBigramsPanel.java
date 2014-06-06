@@ -83,10 +83,7 @@ public class AllPairBigramsPanel extends JPanel {
 
 		// init list on scroll pane
 		leftlist = new SortingTable();
-
-		JScrollPane leftpane = new JScrollPane();
-		leftpane.getViewport().add(leftlist);
-		leftPanel.add(leftpane);
+		leftPanel.add(leftlist);
 		// endof leftPanel
 
 		// centerpanel
@@ -124,10 +121,7 @@ public class AllPairBigramsPanel extends JPanel {
 
 		// init list on scroll pane
 		rightlist = new SortingTable();
-
-		JScrollPane rightpane = new JScrollPane();
-		rightpane.getViewport().add(rightlist);
-		rightPanel.add(rightpane);
+		rightPanel.add(rightlist);
 		// endof rightPanel
 	}
 
@@ -161,14 +155,6 @@ public class AllPairBigramsPanel extends JPanel {
 	private void updateLeftTable(List<List<String>> data) {
 		this.leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);
 		this.leftlist.packMeNow();
-		/*TableCellRenderer defaultRenderer = leftlist.getTable().getTableHeader().getDefaultRenderer();
-		for(int i=0;i<data.size();++i)
-		{
-			for(int j=0;j<data.get(i).size();++j)
-			{
-				this.leftlist.getTable().prepareRenderer(defaultRenderer, i, j);
-			}
-		}*/
 		
 	}
 

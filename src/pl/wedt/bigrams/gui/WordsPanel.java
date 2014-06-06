@@ -77,10 +77,7 @@ public class WordsPanel extends JPanel{
 
 		// init list on scroll pane
 		leftlist = new SortingTable();
-		
-		JScrollPane leftpane = new JScrollPane();
-		leftpane.getViewport().add(leftlist);
-		leftPanel.add(leftpane);
+		leftPanel.add(leftlist);
 		//endof leftPanel
 		
 		//centerpanel
@@ -119,10 +116,7 @@ public class WordsPanel extends JPanel{
 
 		// init list on scroll pane
 		rightlist = new SortingTable();
-
-		JScrollPane rightpane = new JScrollPane();
-		rightpane.getViewport().add(rightlist);
-		rightPanel.add(rightpane);
+		rightPanel.add(rightlist);
 		//endof rightPanel
 	}
 
@@ -203,13 +197,6 @@ public class WordsPanel extends JPanel{
 	
 	void computingInProgess(boolean enable)
 	{
-		/*if(enable)
-		{
-			ArrayList<String> arrayList = new ArrayList<String>();
-			arrayList.add("Wait while stats are computed...");
-			updateList(arrayList);
-			updateCenterList(arrayList);
-			updateRightList(arrayList);
-		}*/
+		
 	}
 }

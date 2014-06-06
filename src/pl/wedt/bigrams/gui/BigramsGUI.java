@@ -2,54 +2,37 @@ package pl.wedt.bigrams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.OperationNotSupportedException;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
-
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.POS;
-import pl.wedt.bigrams.statsmaker.DocumentStats;
 import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
-import pl.wedt.bigrams.statsmaker.WordStats;
 
 public class BigramsGUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+
 	private static Logger log = Logger.getLogger(BigramsGUI.class);
 	
 	//static strings
@@ -60,6 +43,7 @@ public class BigramsGUI extends JFrame {
 			"Tooltips contains help for POS symbols.";
 	private static final String MENU_RUN_RAW = "Run for raw form of word";
 	private static final String MENU_RUN_BASIC = "Run for basic form of word";
+	private static final String MENU_STOP = "Stop";
 	private static final String MENU_CHOOSE_POS = "Choose POS...";
 	private static final String MENU_EXIT = "Exit";
 	private static final String TAB_PAIR_BIGRAMS = "All pairs in sentence bigrams";
@@ -116,13 +100,13 @@ public class BigramsGUI extends JFrame {
 				String[] choosenPOSStringArray = Arrays.copyOf(
 						choosenPOSObjectList,choosenPOSObjectList.length,String[].class);
 				
-				statsMaker.setPosFilter(choosenPOSStringArray);
+				//statsMaker.setPosFilter(choosenPOSStringArray);
+				statsMaker.setStopFlag(false);
 				statsMaker.computeStats();
 				exec.shutdown();
 				try {
 					exec.awaitTermination(UPDATE_STATUS_EVERY, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				updatePanels();
@@ -195,6 +179,9 @@ protected void updateProgress() {
 			case MENU_RUN_BASIC:
 				computeStats();
 				break;
+			case MENU_STOP:
+				computeStop();
+				break;
 			case MENU_CHOOSE_POS:
 			    List<String> selectedPOS = ListDialog.showDialog(
 			                                this,
@@ -217,6 +204,11 @@ protected void updateProgress() {
 		}
 	}
 	
+	private void computeStop() {
+		statsMaker.setStopFlag(true);
+	}
+
+
 	private void initUI() {
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -270,6 +262,7 @@ protected void updateProgress() {
 
 	public static void main(String[] args) {
 		run(new PrintStatsMaker(new DataProvider()));
+		//run(new DummyStatsMaker());
 	}
 
 	private static void run(final IStatsMaker statsMaker) {
