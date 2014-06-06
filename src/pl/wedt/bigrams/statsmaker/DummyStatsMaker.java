@@ -124,7 +124,6 @@ public class DummyStatsMaker implements IStatsMaker{
 		
 		globalWordCount = 15L; 
 		
-		
 		//bigram counts
 		bigramCount.put("we become", 1L);
 		bigramCount.put("become what", 1L);
@@ -187,7 +186,80 @@ public class DummyStatsMaker implements IStatsMaker{
 		
 		globalBigramCount = 12L;
 		
-		//TODO: funnyBigramcounts
+		//funny bigram
+		//bigram counts
+		funnyBigramCount.put("we become", 1L);
+		funnyBigramCount.put("we what", 1L);
+		funnyBigramCount.put("we we", 1L);
+		funnyBigramCount.put("we think", 1L);
+		funnyBigramCount.put("we about", 1L);
+		funnyBigramCount.put("become what", 1L);
+		funnyBigramCount.put("become we", 1L);
+		funnyBigramCount.put("become about", 1L);
+		funnyBigramCount.put("what we", 1L);
+		funnyBigramCount.put("what think", 1L);
+		funnyBigramCount.put("what about", 1L);
+		funnyBigramCount.put("think about", 1L);
+		
+		funnyBigramCount.put("The mind", 1L);
+		funnyBigramCount.put("The is", 1L);
+		funnyBigramCount.put("The everything", 1L);
+		funnyBigramCount.put("mind is", 1L);
+		funnyBigramCount.put("mind everything", 1L);
+		funnyBigramCount.put("is everything", 1L);
+		funnyBigramCount.put("what you", 2L);
+		funnyBigramCount.put("what think", 1L);
+		funnyBigramCount.put("what become", 1L);
+		funnyBigramCount.put("you think", 1L);
+		funnyBigramCount.put("you become", 1L);
+		
+		sentenceFunnyBigramCount.put("we become", 1L);
+		sentenceFunnyBigramCount.put("become what", 1L);
+		sentenceFunnyBigramCount.put("what we", 1L);
+		sentenceFunnyBigramCount.put("we think", 1L);
+		sentenceFunnyBigramCount.put("think about", 1L);
+		sentenceFunnyBigramCount.put("the mind", 1L);
+		sentenceFunnyBigramCount.put("mind is", 1L);
+		sentenceFunnyBigramCount.put("is everything", 1L);
+		sentenceFunnyBigramCount.put("what you", 1L);
+		sentenceFunnyBigramCount.put("you think", 1L);
+		sentenceFunnyBigramCount.put("think you", 1L);
+		sentenceFunnyBigramCount.put("you become", 1L);
+		
+		documentFunnyBigramFreq.put("we become", 1L);
+		documentFunnyBigramFreq.put("become what", 1L);
+		documentFunnyBigramFreq.put("what we", 1L);
+		documentFunnyBigramFreq.put("we think", 1L);
+		documentFunnyBigramFreq.put("think about", 1L);
+		documentFunnyBigramFreq.put("the mind", 1L);
+		documentFunnyBigramFreq.put("mind is", 1L);
+		documentFunnyBigramFreq.put("is everything", 1L);
+		documentFunnyBigramFreq.put("what you", 1L);
+		documentFunnyBigramFreq.put("you think", 1L);
+		documentFunnyBigramFreq.put("think you", 1L);
+		documentFunnyBigramFreq.put("you become", 1L);
+		
+		DocumentStats documentFunnyBigramStats1 = new DocumentStats("Earl Nightingale");
+		Map<String, WordStats> wordFunnyBigramStats1 = documentFunnyBigramStats1.getWordStats();
+		wordFunnyBigramStats1.put("we become", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats1.put("become what", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats1.put("what we", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats1.put("we think", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats1.put("think about", new WordStats(1L, 1L, 1.0d));
+		docFunnyBigramStats.add(documentFunnyBigramStats1);
+		
+		DocumentStats documentFunnyBigramStats2 = new DocumentStats("Buddha");
+		Map<String, WordStats> wordFunnyBigramStats2 = documentFunnyBigramStats2.getWordStats();
+		wordFunnyBigramStats2.put("the mind", new WordStats(2L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("mind is", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("is everything", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("what you", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("you think", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("think you", new WordStats(1L, 1L, 1.0d));
+		wordFunnyBigramStats2.put("you become", new WordStats(1L, 1L, 1.0d));
+		docFunnyBigramStats.add(documentFunnyBigramStats2);
+		
+		globalFunnyBigramCount = 12L;
 	}
 	
 	protected String getBigram(Word w1, Word w2) {
