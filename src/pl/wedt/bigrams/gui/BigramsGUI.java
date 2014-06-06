@@ -99,8 +99,8 @@ public class BigramsGUI extends JFrame {
 				Object[] choosenPOSObjectList = choosenPOS.toArray();
 				String[] choosenPOSStringArray = Arrays.copyOf(
 						choosenPOSObjectList,choosenPOSObjectList.length,String[].class);
-				
-				//statsMaker.setPosFilter(choosenPOSStringArray);
+				log.debug("choosenPOSStringArray " + Arrays.toString(choosenPOSStringArray));
+				statsMaker.setPosFilter(choosenPOSStringArray);
 				statsMaker.setStopFlag(false);
 				statsMaker.computeStats();
 				exec.shutdown();
@@ -188,9 +188,9 @@ protected void updateProgress() {
 			                                DIALOG_DESCRIPTION,
 			                                DIALOG_TITLE,
 			                                POS.getPOSMap(),
-			                                POS.getDefaultPOS(),
+			                                choosenPOS,
 			                                "XXXXXXXX");
-			    log.debug("Selected POS" + selectedPOS);
+			    log.debug("Selected POS " + selectedPOS);
 			    if(selectedPOS != null)
 			    {
 			    	choosenPOS = selectedPOS;

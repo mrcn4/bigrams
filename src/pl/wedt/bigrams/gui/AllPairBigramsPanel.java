@@ -138,32 +138,31 @@ public class AllPairBigramsPanel extends JPanel {
 			log.error("DocumentStats for " + name + " not found");
 			return;
 		}
-		List<List<String>> data = new ArrayList<List<String>>();
+		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
-			ArrayList<String> row = new ArrayList<String>();
+			ArrayList<Object> row = new ArrayList<Object>();
 
 			row.add(me.getKey());
-			row.add(me.getValue().getWordCount().toString());
-			row.add(me.getValue().getSentenceCount().toString());
-			row.add(me.getValue().getTfidf().toString());
+			row.add(me.getValue().getWordCount());
+			row.add(me.getValue().getSentenceCount());
+			row.add(me.getValue().getTfidf());
 			data.add(row);
 		}
 		updateRightList(data);
 	}
 
-	private void updateLeftTable(List<List<String>> data) {
+	private void updateLeftTable(List<List<Object>> data) {
 		this.leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);
 		this.leftlist.packMeNow();
 		
 	}
 
 	private void updateCenterList(List<String> list) {
-		this.centerListData = list;
 		this.centerlist.setListData(list.toArray());
 	}
 
-	private void updateRightList(List<List<String>> data) {
+	private void updateRightList(List<List<Object>> data) {
 		this.rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
 	}
 
@@ -174,30 +173,33 @@ public class AllPairBigramsPanel extends JPanel {
 		Map<String, Long> globalCount = statsMaker.getFunnyBigramCount();
 
 		// update left pane
-		List<List<String>> data = new ArrayList<List<String>>();
+		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Map.Entry<String, Long> me : globalCount.entrySet()) {
-			ArrayList<String> row = new ArrayList<String>();
+			ArrayList<Object> row = new ArrayList<Object>();
 
 			row.add(me.getKey());
 
-			row.add(me.getValue().toString());
+			row.add(me.getValue());
 
 			String P_Bigram = String.format("%.4f", (me.getValue()) * 1.0
 					/ statsMaker.getGlobalFunnyBigramCount());
-			row.add(P_Bigram);
+			row.add((me.getValue()) * 1.0
+					/ statsMaker.getGlobalFunnyBigramCount());
 
 			String firstWord = me.getKey().split(", ")[0];
 			Long firstWordCount = statsMaker.getGlobalCount().get(firstWord);
 			String P_s1 = String.format("%.4f", firstWordCount * 1.0
 					/ statsMaker.getGlobalWordCount());
-			row.add(P_s1);
+			row.add(firstWordCount * 1.0
+					/ statsMaker.getGlobalWordCount());
 
 			String secondWord = me.getKey().split(", ")[0];
 			Long secondWordCount = statsMaker.getGlobalCount().get(secondWord);
 			String P_s2 = String.format("%.4f", secondWordCount * 1.0
 					/ statsMaker.getGlobalWordCount());
-			row.add(P_s2);
+			row.add(secondWordCount * 1.0
+					/ statsMaker.getGlobalWordCount());
 
 			data.add(row);
 		}

@@ -138,21 +138,21 @@ public class WordsPanel extends JPanel{
 			return;
 		}
 		
-		List<List<String>> data = new ArrayList<List<String>>();
+		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
-			ArrayList<String> row = new ArrayList<String>();
+			ArrayList<Object> row = new ArrayList<Object>();
 
 			row.add(me.getKey());
-			row.add(me.getValue().getWordCount().toString());
-			row.add(me.getValue().getSentenceCount().toString());
-			row.add(me.getValue().getTfidf().toString());
+			row.add(me.getValue().getWordCount());
+			row.add(me.getValue().getSentenceCount());
+			row.add(me.getValue().getTfidf());
 			data.add(row);
 		}
 		updateRightList(data);
 	}
 	
-	private void updateLeftTable(List<List<String>> data) {
+	private void updateLeftTable(List<List<Object>> data) {
 		this.leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);		
 	}
 
@@ -160,10 +160,10 @@ public class WordsPanel extends JPanel{
 		this.centerlist.setListData(list.toArray());
 	}
 
-	private void updateRightList(List<List<String>> data) {
+	private void updateRightList(List<List<Object>> data) {
 		this.rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
 	}
-
+	
 	public void updateStats(IStatsMaker statsMaker)
 	{
 		//save for later
@@ -172,14 +172,14 @@ public class WordsPanel extends JPanel{
 		Map<String, Long> globalCount = statsMaker.getGlobalCount();
 
 		// update left pane
-		List<List<String>> data = new ArrayList<List<String>>();
+		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Map.Entry<String, Long> me : globalCount.entrySet()) {
-			ArrayList<String> row = new ArrayList<String>();
+			ArrayList<Object> row = new ArrayList<Object>();
 
 			row.add(me.getKey());
-			row.add(me.getValue().toString());
-			row.add(statsMaker.getSentenceCount().get(me.getKey()).toString());
+			row.add(me.getValue());
+			row.add(statsMaker.getSentenceCount().get(me.getKey()));
 
 			data.add(row);
 		}

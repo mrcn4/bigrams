@@ -58,7 +58,7 @@ public class SortingTable extends JPanel {
         super(new GridLayout(1,0));
 
         ArrayList<String> arrayList = new ArrayList<String>();
-        ArrayList<List<String>> arrayList2 = new ArrayList<List<String>>();
+        ArrayList<List<Object>> arrayList2 = new ArrayList<List<Object>>();
         
         table = new JTable(new MyTableModel(arrayList,arrayList2));
         table.setFillsViewportHeight(true);
@@ -116,9 +116,9 @@ public class SortingTable extends JPanel {
 
     class MyTableModel extends AbstractTableModel {
     	private List<String> columnNames;
-		private List<List<String>> data;
+		private List<List<Object>> data;
     	
-    	public MyTableModel(List<String> columnNames, List<List<String>> data) {
+    	public MyTableModel(List<String> columnNames, List<List<Object>> data) {
 			this.columnNames = columnNames;
 			this.data = data;
 		}
@@ -139,14 +139,10 @@ public class SortingTable extends JPanel {
             return data.get(row).get(col);
         }
 
-        /*
-         * JTable uses this method to determine the default renderer/
-         * editor for each cell.  If we didn't implement this method,
-         * then the last column would contain text ("true"/"false"),
-         * rather than a check box.
-         */
         public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
+        	Object valueAt = getValueAt(0, c);
+        	Class cc = getValueAt(0, c).getClass();
+            return cc;
         }
 
         /*
@@ -157,7 +153,7 @@ public class SortingTable extends JPanel {
             return false;
         }
         
-        public void setNewData(List<String> columnNames, List<List<String>> data)
+        public void setNewData(List<String> columnNames, List<List<Object>> data)
         {
         	this.columnNames = columnNames;
 			this.data = data;
