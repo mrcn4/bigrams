@@ -277,7 +277,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
 	@Override
-	public void setPosFilter(List<String> poses) {
+	public void setPosFilter(String[] poses) {
 		posFilter.clear();
 		for (String pos : poses)
 			posFilter.add(pos);
