@@ -103,6 +103,14 @@ public interface IStatsMaker {
 	
 	public abstract void setGlobalSentenceCount(Long globalSentenceCount);
 	
-	public abstract void setPosFilter(String... poses);
+	public abstract void setPosFilter(String[] poses);
+	
+	public abstract Long getDocumentsCompleted();
+	
+	public abstract void setDocumentsCompleted(Long documentsCompleted);
+	
+	public abstract boolean isStopFlag();
+
+	public abstract void setStopFlag(boolean stopFlag);
 
 }

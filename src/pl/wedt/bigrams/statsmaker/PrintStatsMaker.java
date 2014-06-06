@@ -18,6 +18,8 @@ public class PrintStatsMaker implements IStatsMaker {
 	private DataProvider dp;
 	private Long globalSentenceCount;
 	private List<String> posFilter;
+	private Long documentsCompleted;
+	private boolean stopFlag;
 	
 	//single words
 	private Map<String, Long> globalCount; // liczba wystąpień słowa w repozytorium
@@ -44,6 +46,8 @@ public class PrintStatsMaker implements IStatsMaker {
 		this.dp = dp;
 		this.globalSentenceCount = 0L;
 		this.posFilter = new ArrayList<>();
+		this.documentsCompleted = 0L;
+		this.stopFlag = false;
 		
 		this.globalCount = new HashMap<>();
 		this.sentenceCount = new HashMap<>();
@@ -76,12 +80,24 @@ public class PrintStatsMaker implements IStatsMaker {
 		List<Document> documents = dp.getDocuments();
 		
 		for (Document doc : documents) {
+			if (stopFlag)
+				break;
+			
 			DocumentStats ds = new DocumentStats(doc);
-			Set<String> uniqueWords = new HashSet<String>();
-			String lastWord = null;
+			DocumentStats dbs = new DocumentStats(doc);
+			DocumentStats dfbs = new DocumentStats(doc);
+			
+			Set<String> uniqueWords = new HashSet<>();
+			Set<String> uniqueBigrams = new HashSet<>();
+			Set<String> uniqueFunnyBigrams = new HashSet<>();
 			
 			for (Sentence s: doc.getSentences()) {
 				globalSentenceCount++;
+				Word lastWord = null;
+				Set<String> uniqueSentenceBigrams = new HashSet<>();
+				Set<String> uniqueSentenceFunnyBigrams = new HashSet<>();
+				
+				//single words and bigrams
 				for (Word w: s.getWords()) {
 					if (posFilter.indexOf(w.getPOS()) != -1)
 						continue;
@@ -108,10 +124,33 @@ public class PrintStatsMaker implements IStatsMaker {
 					ws.setWordCount(wordDocumentCount+1);
 					
 					ds.getWordStats().put(getWord(w), ws);
+					
+					if (lastWord != null) {
+						globalBigramCount++;
+						uniqueBigrams.add(getBigram(w, lastWord));
+						uniqueSentenceBigrams.add(getBigram(w, lastWord));
+						Long bigramGlobalCount = bigramCount.get(getBigram(w, lastWord));
+						if (bigramGlobalCount == null) {
+							bigramGlobalCount = 0L;
+						}
+						bigramCount.put(getBigram(w, lastWord), bigramGlobalCount+1);
+						WordStats bs = dbs.getWordStats().get(getBigram(w, lastWord));
+						if (bs == null) {
+							bs = new WordStats();
+						}
+						Long bigramDocumentCount = bs.getWordCount();
+						if (bigramDocumentCount == null) {
+							bigramDocumentCount = 0L;
+						}
+						bs.setWordCount(bigramDocumentCount+1);
+						dbs.getWordStats().put(getBigram(w, lastWord), bs);
+					}
+					
+					lastWord = w;
 				}
 				
+				//single words and bigrams in sentences
 				Set<Word> uniqueSentenceWords = new HashSet<>(s.getWords());
-				
 				for (Word w: uniqueSentenceWords) {
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
@@ -128,9 +167,77 @@ public class PrintStatsMaker implements IStatsMaker {
 					}
 					ws.setSentenceCount(sentenceDocumentCount+1);
 				}
+				
+				for (String bg: uniqueSentenceBigrams) {
+					WordStats bs = dbs.getWordStats().get(bg);
+					
+					Long sentenceBigramGlobalCount = sentenceBigramCount.get(bg);
+					if (sentenceBigramGlobalCount == null) {
+						sentenceBigramGlobalCount = 0L;
+					}
+					sentenceBigramCount.put(bg, sentenceBigramGlobalCount+1);
+					
+					Long sentenceBigramDocumentCount = bs.getSentenceCount();
+					if (sentenceBigramDocumentCount == null) {
+						sentenceBigramDocumentCount = 0L;
+					}
+					bs.setSentenceCount(sentenceBigramDocumentCount+1);
+				}
+				
+				//funny bigrams
+				for (Word w1: s.getWords()) {
+					for (Word w2: s.getWords()) {
+						if (w1.toString().equals(w2.toString()) 
+							|| posFilter.indexOf(w1.getPOS()) == -1 
+							|| posFilter.indexOf(w2.getPOS()) == -1)
+							continue;
+						
+						String fbg = getBigram(w1, w2);
+						globalFunnyBigramCount++;
+						
+						uniqueFunnyBigrams.add(fbg);
+						uniqueSentenceFunnyBigrams.add(fbg);
+						Long funnyBigramGlobalCount = funnyBigramCount.get(fbg);
+						if (funnyBigramGlobalCount == null) {
+							funnyBigramGlobalCount = 0L;
+						}
+						funnyBigramCount.put(fbg, funnyBigramGlobalCount+1);
+						WordStats fbs = dfbs.getWordStats().get(fbg);
+						if (fbs == null) {
+							fbs = new WordStats();
+						}
+						Long funnyBigramDocumentCount = fbs.getWordCount();
+						if (funnyBigramDocumentCount == null) {
+							funnyBigramDocumentCount = 0L;
+						}
+						fbs.setWordCount(funnyBigramDocumentCount+1);
+						dfbs.getWordStats().put(fbg, fbs);
+						
+					}
+				}
+				
+				for (String fbg: uniqueSentenceFunnyBigrams) {
+					WordStats fbs = dbs.getWordStats().get(fbg);
+					
+					Long sentenceFunnyBigramGlobalCount = sentenceFunnyBigramCount.get(fbg);
+					if (sentenceFunnyBigramGlobalCount == null) {
+						sentenceFunnyBigramGlobalCount = 0L;
+					}
+					sentenceFunnyBigramCount.put(fbg, sentenceFunnyBigramGlobalCount+1);
+					
+					Long sentenceFunnyBigramDocumentCount = fbs.getSentenceCount();
+					if (sentenceFunnyBigramDocumentCount == null) {
+						sentenceFunnyBigramDocumentCount = 0L;
+					}
+					fbs.setSentenceCount(sentenceFunnyBigramDocumentCount+1);
+				}
+				
 			}
 			docStats.add(ds);
+			docBigramStats.add(dbs);
+			docFunnyBigramStats.add(dfbs);
 			
+			//df
 			for (String w : uniqueWords) {
 				Long wordFreq = documentFreq.get(w);
 				if (wordFreq == null) {
@@ -138,8 +245,27 @@ public class PrintStatsMaker implements IStatsMaker {
 				}
 				documentFreq.put(w, wordFreq+1);
 			}
+			
+			for (String bg: uniqueBigrams) {
+				Long bigramFreq = documentBigramFreq.get(bg);
+				if (bigramFreq == null) {
+					bigramFreq = 0L;
+				}
+				documentBigramFreq.put(bg, bigramFreq+1);
+			}
+			
+			for (String fbg: uniqueFunnyBigrams) {
+				Long funnyBigramFreq = documentFunnyBigramFreq.get(fbg);
+				if (funnyBigramFreq == null) {
+					funnyBigramFreq = 0L;
+				}
+				documentFunnyBigramFreq.put(fbg, funnyBigramFreq+1);
+			}
+			
+			setDocumentsCompleted(getDocumentsCompleted() + 1);
 		}
 		
+		//tf-idf
 		for (DocumentStats ds: docStats) {
 			for (String w : ds.getWordStats().keySet()) {
 				ds.getWordStats().get(w).setTfidf((double)ds.getWordStats().get(w).getWordCount() * Math.log((double)documents.size() / (double)documentFreq.get(w)));
@@ -149,7 +275,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	
 	protected String getBigram(Word w1, Word w2) {
 		
-		if (getWord(w1).length() <= getWord(w2).length())
+		if (getWord(w1).compareToIgnoreCase(getWord(w2)) <= 0)
 			return getWord(w1) + ", " + getWord(w2);
 		
 		else 
@@ -160,7 +286,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
 	@Override
-	public void setPosFilter(String... poses) {
+	public void setPosFilter(String[] poses) {
 		posFilter.clear();
 		for (String pos : poses)
 			posFilter.add(pos);
@@ -474,5 +600,27 @@ public class PrintStatsMaker implements IStatsMaker {
 
 	public void setGlobalSentenceCount(Long globalSentenceCount) {
 		this.globalSentenceCount = globalSentenceCount;
+	}
+
+
+
+	public Long getDocumentsCompleted() {
+		return documentsCompleted;
+	}
+
+
+
+	public void setDocumentsCompleted(Long documentsCompleted) {
+		this.documentsCompleted = documentsCompleted;
+	}
+	
+
+	public boolean isStopFlag() {
+		return stopFlag;
+	}
+
+
+	public void setStopFlag(boolean stopFlag) {
+		this.stopFlag = stopFlag;
 	}
 }
