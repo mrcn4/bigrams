@@ -217,6 +217,8 @@ public class PrintStatsMaker implements IStatsMaker {
 					}
 				}
 				
+				System.err.println(dfbs);
+				
 				for (String fbg: uniqueSentenceFunnyBigrams) {
 					WordStats fbs = dfbs.getWordStats().get(fbg);
 					
