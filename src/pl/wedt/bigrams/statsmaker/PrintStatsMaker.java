@@ -15,6 +15,7 @@ import pl.wedt.bigrams.dataprovider.Word;
 public class PrintStatsMaker implements IStatsMaker {
 	private DataProvider dp;
 	private Long globalSentenceCount;
+	private List<String> posFilter;
 	
 	//single words
 	private Map<String, Long> globalCount; // liczba wystąpień słowa w repozytorium
@@ -40,6 +41,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	public PrintStatsMaker(DataProvider dp) {
 		this.dp = dp;
 		this.globalSentenceCount = 0L;
+		this.posFilter = new ArrayList<>();
 		
 		this.globalCount = new HashMap<>();
 		this.sentenceCount = new HashMap<>();
@@ -47,7 +49,17 @@ public class PrintStatsMaker implements IStatsMaker {
 		this.documentFreq = new HashMap<>();
 		this.globalWordCount = 0L;
 		
-		//
+		this.bigramCount = new HashMap<>();
+		this.sentenceBigramCount = new HashMap<>();
+		this.docBigramStats = new ArrayList<>();
+		this.documentBigramFreq = new HashMap<>();
+		this.globalBigramCount = 0L;
+		
+		this.funnyBigramCount = new HashMap<>();
+		this.sentenceFunnyBigramCount = new HashMap<>();
+		this.docFunnyBigramStats = new ArrayList<>();
+		this.documentFunnyBigramFreq = new HashMap<>();
+		this.globalFunnyBigramCount = 0L;
 	}
 	
 	
@@ -64,10 +76,14 @@ public class PrintStatsMaker implements IStatsMaker {
 		for (Document doc : documents) {
 			DocumentStats ds = new DocumentStats(doc);
 			Set<Word> uniqueWords = new HashSet<Word>();
+			String lastWord = null;
 			
 			for (Sentence s: doc.getSentences()) {
 				globalSentenceCount++;
-				for (Word w: s.getWords()) {	
+				for (Word w: s.getWords()) {
+					if (posFilter.indexOf(w.getPOS()) != -1)
+						continue;
+					
 					uniqueWords.add(w);
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
@@ -128,10 +144,26 @@ public class PrintStatsMaker implements IStatsMaker {
 			}
 		}
 	}
+	
+	protected String getBigram(Word w1, Word w2) {
+		
+		if (getWord(w1).length() <= getWord(w2).length())
+			return getWord(w1) + ", " + getWord(w2);
+		
+		else 
+			return getWord(w2) + ", " + getWord(w1);
+		
+	}
 
 	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
-
+	@Override
+	public void setPosFilter(String... poses) {
+		posFilter.clear();
+		for (String pos : poses)
+			posFilter.add(pos);
+	}
+	
 	/* (non-Javadoc)
 	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getGlobalCount()
 	 */

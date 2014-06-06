@@ -8,10 +8,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.dataprovider.Word;
 import pl.wedt.bigrams.gui.BigramsGUI;
 
 public class DummyStatsMaker implements IStatsMaker{
 	private Long globalSentenceCount;
+	private List<String> posFilter;
 	
 	private Map<String, Long> globalCount;
 	private Map<String, Long> sentenceCount;
@@ -39,6 +41,7 @@ public class DummyStatsMaker implements IStatsMaker{
 
 	public DummyStatsMaker() {
 		this.globalSentenceCount = 0L;
+		this.posFilter = new ArrayList<>();
 		
 		this.globalCount = new HashMap<>();
 		this.docStats = new ArrayList<>();
@@ -185,6 +188,25 @@ public class DummyStatsMaker implements IStatsMaker{
 		globalBigramCount = 12L;
 		
 		//TODO: funnyBigramcounts
+	}
+	
+	protected String getBigram(Word w1, Word w2) {
+		
+		if (getWord(w1).length() <= getWord(w2).length())
+			return getWord(w1) + ", " + getWord(w2);
+		
+		else 
+			return getWord(w2) + ", " + getWord(w1);
+		
+	}
+
+	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
+
+	@Override
+	public void setPosFilter(String... poses) {
+		posFilter.clear();
+		for (String pos : poses)
+			posFilter.add(pos);
 	}
 
 	@Override
