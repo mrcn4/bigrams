@@ -108,5 +108,9 @@ public interface IStatsMaker {
 	public abstract Long getDocumentsCompleted();
 	
 	public abstract void setDocumentsCompleted(Long documentsCompleted);
+	
+	public abstract boolean isStopFlag();
+
+	public abstract void setStopFlag(boolean stopFlag);
 
 }

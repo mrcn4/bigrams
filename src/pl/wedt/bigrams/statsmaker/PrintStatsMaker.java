@@ -19,6 +19,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	private Long globalSentenceCount;
 	private List<String> posFilter;
 	private Long documentsCompleted;
+	private boolean stopFlag;
 	
 	//single words
 	private Map<String, Long> globalCount; // liczba wystąpień słowa w repozytorium
@@ -46,6 +47,7 @@ public class PrintStatsMaker implements IStatsMaker {
 		this.globalSentenceCount = 0L;
 		this.posFilter = new ArrayList<>();
 		this.documentsCompleted = 0L;
+		this.stopFlag = false;
 		
 		this.globalCount = new HashMap<>();
 		this.sentenceCount = new HashMap<>();
@@ -78,6 +80,9 @@ public class PrintStatsMaker implements IStatsMaker {
 		List<Document> documents = dp.getDocuments();
 		
 		for (Document doc : documents) {
+			if (stopFlag)
+				break;
+			
 			DocumentStats ds = new DocumentStats(doc);
 			DocumentStats dbs = new DocumentStats(doc);
 			DocumentStats dfbs = new DocumentStats(doc);
@@ -607,5 +612,15 @@ public class PrintStatsMaker implements IStatsMaker {
 
 	public void setDocumentsCompleted(Long documentsCompleted) {
 		this.documentsCompleted = documentsCompleted;
+	}
+	
+
+	public boolean isStopFlag() {
+		return stopFlag;
+	}
+
+
+	public void setStopFlag(boolean stopFlag) {
+		this.stopFlag = stopFlag;
 	}
 }
