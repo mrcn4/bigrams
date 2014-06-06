@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sound.midi.InvalidMidiDataException;
+
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.Document;
 import pl.wedt.bigrams.dataprovider.Sentence;
@@ -75,7 +77,7 @@ public class PrintStatsMaker implements IStatsMaker {
 		
 		for (Document doc : documents) {
 			DocumentStats ds = new DocumentStats(doc);
-			Set<Word> uniqueWords = new HashSet<Word>();
+			Set<String> uniqueWords = new HashSet<String>();
 			String lastWord = null;
 			
 			for (Sentence s: doc.getSentences()) {
@@ -84,7 +86,7 @@ public class PrintStatsMaker implements IStatsMaker {
 					if (posFilter.indexOf(w.getPOS()) != -1)
 						continue;
 					
-					uniqueWords.add(w);
+					uniqueWords.add(getWord(w));
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
 					if (ws == null) {
@@ -129,18 +131,18 @@ public class PrintStatsMaker implements IStatsMaker {
 			}
 			docStats.add(ds);
 			
-			for (Word w : uniqueWords) {
-				Long wordFreq = documentFreq.get(getWord(w));
+			for (String w : uniqueWords) {
+				Long wordFreq = documentFreq.get(w);
 				if (wordFreq == null) {
 					wordFreq = 0L;
 				}
-				documentFreq.put(getWord(w), wordFreq+1);
+				documentFreq.put(w, wordFreq+1);
 			}
 		}
 		
 		for (DocumentStats ds: docStats) {
 			for (String w : ds.getWordStats().keySet()) {
-				ds.getWordStats().get(w).setTfidf(ds.getWordStats().get(w).getWordCount() * Math.log(documents.size() / documentFreq.get(w)));
+				ds.getWordStats().get(w).setTfidf((double)ds.getWordStats().get(w).getWordCount() * Math.log((double)documents.size() / (double)documentFreq.get(w)));
 			}
 		}
 	}
