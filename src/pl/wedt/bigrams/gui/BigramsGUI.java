@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.BorderFactory;
@@ -55,7 +58,8 @@ public class BigramsGUI extends JFrame {
 			"Choose POS (Part of Speech) you want to include in analisys.\n\n" +
 			"Hold CTRL to select multiple items. \n\n" +
 			"Tooltips contains help for POS symbols.";
-	private static final String MENU_RUN = "Run";
+	private static final String MENU_RUN_RAW = "Run for raw form of word";
+	private static final String MENU_RUN_BASIC = "Run for basic form of word";
 	private static final String MENU_CHOOSE_POS = "Choose POS...";
 	private static final String MENU_EXIT = "Exit";
 	private static final String TAB_PAIR_BIGRAMS = "All pairs in sentence bigrams";
@@ -65,7 +69,8 @@ public class BigramsGUI extends JFrame {
 	private static final String STATUS_DEFAULT = "";
 	private static final String STATUS_COMPUTATION_STARTS = "Computation has started. Wait for results...";
 	private static final String STATUS_COMPUTATION_ENDS = "Computation has ended. You can view results now.";
-
+	private static final Integer UPDATE_STATUS_EVERY = 2000;
+	
 	//GUI objects
 	private WordsPanel wordsPanel;
 	private BigramsPanel bigramsPanel;
@@ -76,6 +81,12 @@ public class BigramsGUI extends JFrame {
 	private IStatsMaker statsMaker;
 	private List<String> choosenPOS = POS.getDefaultPOS();
 
+	private JMenuItem menuRaw;
+
+	private JMenuItem menuBasic;
+
+
+	ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 	
 	public BigramsGUI(final IStatsMaker statsMaker) {
 		this.statsMaker = statsMaker;
@@ -93,9 +104,6 @@ public class BigramsGUI extends JFrame {
 		allPairBigramsPanel.updateStats(statsMaker);
 	}
 	
-	/**
-	 * fixme - synchronize
-	 */
 	private synchronized void computeStats()
 	{
 		switchGUIWhileComputing(true);
@@ -104,13 +112,19 @@ public class BigramsGUI extends JFrame {
 
 			@Override
 			public void run() {
-				//TODO: revert from vararg in setPosFilter
 				Object[] choosenPOSObjectList = choosenPOS.toArray();
 				String[] choosenPOSStringArray = Arrays.copyOf(
 						choosenPOSObjectList,choosenPOSObjectList.length,String[].class);
 				
 				statsMaker.setPosFilter(choosenPOSStringArray);
 				statsMaker.computeStats();
+				exec.shutdown();
+				try {
+					exec.awaitTermination(UPDATE_STATUS_EVERY, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				updatePanels();
 				switchGUIWhileComputing(false);
 			}
@@ -118,7 +132,19 @@ public class BigramsGUI extends JFrame {
 		});
 		thread.start();
 		
+		exec.scheduleWithFixedDelay(new Runnable() {
+			  @Override
+			  public void run() {
+				  updateProgress();
+			  }
+			}, 0,UPDATE_STATUS_EVERY, TimeUnit.MILLISECONDS);
 	}
+
+
+protected void updateProgress() {
+
+}
+
 	
 	/**
 	 * Makes necesarry changes in GUI while computing
@@ -131,10 +157,14 @@ public class BigramsGUI extends JFrame {
 		if(isComputing)
 		{
 			setStatus(STATUS_COMPUTATION_STARTS);
+			menuRaw.setEnabled(false);
+			menuBasic.setEnabled(false);
 		}
 		else
 		{
 			setStatus(STATUS_COMPUTATION_ENDS);
+			menuRaw.setEnabled(true);
+			menuBasic.setEnabled(true);
 		}
 	}
 	
@@ -159,7 +189,10 @@ public class BigramsGUI extends JFrame {
 	{
 		switch(action)
 		{
-			case MENU_RUN:
+			case MENU_RUN_RAW:
+				computeStats();
+				break;
+			case MENU_RUN_BASIC:
 				computeStats();
 				break;
 			case MENU_CHOOSE_POS:
@@ -195,11 +228,15 @@ public class BigramsGUI extends JFrame {
             }
          };
         
-	    JMenuItem item = new JMenuItem(MENU_RUN);
-	    fileMenu.add(item);
-        item.addActionListener(menuActionListener);
+	    menuRaw = new JMenuItem(MENU_RUN_RAW);
+	    fileMenu.add(menuRaw);
+	    menuRaw.addActionListener(menuActionListener);
         
-        item = new JMenuItem(MENU_CHOOSE_POS);
+        menuBasic = new JMenuItem(MENU_RUN_BASIC);
+	    fileMenu.add(menuBasic);
+	    menuBasic.addActionListener(menuActionListener);
+        
+        JMenuItem item = new JMenuItem(MENU_CHOOSE_POS);
 	    fileMenu.add(item);
         item.addActionListener(menuActionListener);
         
@@ -232,8 +269,7 @@ public class BigramsGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		//run(new PrintStatsMaker(new DataProvider()));
-		run(new DummyStatsMaker());
+		run(new PrintStatsMaker(new DataProvider()));
 	}
 
 	private static void run(final IStatsMaker statsMaker) {
