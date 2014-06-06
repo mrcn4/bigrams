@@ -192,7 +192,7 @@ public class DummyStatsMaker implements IStatsMaker{
 	
 	protected String getBigram(Word w1, Word w2) {
 		
-		if (getWord(w1).length() <= getWord(w2).length())
+		if (getWord(w1).compareToIgnoreCase(getWord(w2)) <= 0)
 			return getWord(w1) + ", " + getWord(w2);
 		
 		else 
@@ -203,7 +203,7 @@ public class DummyStatsMaker implements IStatsMaker{
 	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
 	@Override
-	public void setPosFilter(String... poses) {
+	public void setPosFilter(List<String> poses) {
 		posFilter.clear();
 		for (String pos : poses)
 			posFilter.add(pos);
