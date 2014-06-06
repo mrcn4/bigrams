@@ -94,6 +94,7 @@ public class PrintStatsMaker implements IStatsMaker {
 			for (Sentence s: doc.getSentences()) {
 				globalSentenceCount++;
 				Word lastWord = null;
+				Set<String> uniqueSentenceWords = new HashSet<>();
 				Set<String> uniqueSentenceBigrams = new HashSet<>();
 				Set<String> uniqueSentenceFunnyBigrams = new HashSet<>();
 				
@@ -103,6 +104,7 @@ public class PrintStatsMaker implements IStatsMaker {
 						continue;
 					
 					uniqueWords.add(getWord(w));
+					uniqueSentenceWords.add(getWord(w));
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
 					if (ws == null) {
@@ -150,16 +152,15 @@ public class PrintStatsMaker implements IStatsMaker {
 				}
 				
 				//single words and bigrams in sentences
-				Set<Word> uniqueSentenceWords = new HashSet<>(s.getWords());
-				for (Word w: uniqueSentenceWords) {
+				for (String w: uniqueSentenceWords) {
 					
-					WordStats ws = ds.getWordStats().get(getWord(w));
+					WordStats ws = ds.getWordStats().get(w);
 					
-					Long sentenceGlobalCount = sentenceCount.get(getWord(w));
+					Long sentenceGlobalCount = sentenceCount.get(w);
 					if (sentenceGlobalCount == null) {
 						sentenceGlobalCount = 0L;
 					}
-					sentenceCount.put(getWord(w), sentenceGlobalCount+1);
+					sentenceCount.put(w, sentenceGlobalCount+1);
 					
 					Long sentenceDocumentCount = ws.getSentenceCount();
 					if (sentenceDocumentCount == null) {
@@ -217,7 +218,7 @@ public class PrintStatsMaker implements IStatsMaker {
 				}
 				
 				for (String fbg: uniqueSentenceFunnyBigrams) {
-					WordStats fbs = dbs.getWordStats().get(fbg);
+					WordStats fbs = dfbs.getWordStats().get(fbg);
 					
 					Long sentenceFunnyBigramGlobalCount = sentenceFunnyBigramCount.get(fbg);
 					if (sentenceFunnyBigramGlobalCount == null) {
