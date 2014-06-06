@@ -11,6 +11,11 @@ public interface IStatsMaker {
 	public abstract void computeStats();
 
 	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentCount()
+	 */
+	public abstract int getDocumentCount();
+	
+	/* (non-Javadoc)
 	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getGlobalCount()
 	 */
 	public abstract Map<String, Long> getGlobalCount();

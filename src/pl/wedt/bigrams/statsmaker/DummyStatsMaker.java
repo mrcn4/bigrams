@@ -278,6 +278,14 @@ public class DummyStatsMaker implements IStatsMaker{
 
 	/* abstract */ protected String getWord(Word w) { return w.getBasicForm(); }
 
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentCount()
+	 */
+	@Override
+	public int getDocumentCount() {
+		return 1;
+	}
+	
 	@Override
 	public void setPosFilter(String[] poses) {
 		posFilter.clear();
