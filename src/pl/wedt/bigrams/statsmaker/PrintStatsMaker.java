@@ -68,7 +68,13 @@ public class PrintStatsMaker implements IStatsMaker {
 		this.globalFunnyBigramCount = 0L;
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#getDocumentCount()
+	 */
+	@Override
+	public int getDocumentCount() {
+		return dp.getDocuments().size();
+	}
 	
 	/* (non-Javadoc)
 	 * @see pl.wedt.bigrams.statsmaker.IStatsMaker#computeStats()
