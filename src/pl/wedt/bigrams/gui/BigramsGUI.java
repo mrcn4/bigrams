@@ -26,16 +26,18 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
+import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.statsmaker.DocumentStats;
 import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
+import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 import pl.wedt.bigrams.statsmaker.WordStats;
 
 public class BigramsGUI extends JFrame {
 
 	private static final String WINDOW_TITLE = "Bigram analyser";
 	private final String LEFT_LABEL = "Global words frequency";
-	private final String CENTER_LABEL = "Document list (click to see)";
+	private final String CENTER_LABEL = "Document list (click to see details)";
 	private final String RIGHT_LABEL = "Word statistics for document (count,sentenceCount,tfidf)";
 	
 	private JLabel leftlabel;
@@ -53,13 +55,38 @@ public class BigramsGUI extends JFrame {
 	private IStatsMaker statsMaker;
 	
 	
-	public BigramsGUI(IStatsMaker statsMaker) {
+	public BigramsGUI(final IStatsMaker statsMaker) {
 		this.statsMaker = statsMaker;
 		initUI();
-		
-		statsMaker.computeStats();
-		
-		
+	
+		Thread thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				//wait for it
+				
+				ArrayList<String> arrayList = new ArrayList<String>();
+				arrayList.add("Wait while stats are computed...");
+				updateList(arrayList);
+				updateCenterList(arrayList);
+				updateRightList(arrayList);
+				
+				statsMaker.computeStats();
+				
+				ArrayList<String> arrayListEmpty = new ArrayList<String>();
+				updateList(arrayListEmpty);
+				updateCenterList(arrayListEmpty);
+				updateRightList(arrayListEmpty);
+				
+				updateStats();
+			}
+			
+		});
+		thread.start();
+	}
+	
+	private void updateStats()
+	{
 		Map<String, Long> globalCount = statsMaker.getGlobalCount();
 		//sort this shit
 		Ordering<Map.Entry<String, Long>> byMapValues = new Ordering<Map.Entry<String, Long>>() {
@@ -86,8 +113,6 @@ public class BigramsGUI extends JFrame {
 			docnames.add(docstat.getDocName());
 		}
 		updateCenterList(docnames);
-		
-		
 	}
 
 	private void updateList(List<String> list) {
@@ -105,9 +130,8 @@ public class BigramsGUI extends JFrame {
 		this.rightListData = list;
 		this.rightlist.setListData(list.toArray());
 	}
-	
-	private void initUI() {
-
+	private JPanel wordsPanel()
+	{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -169,10 +193,21 @@ public class BigramsGUI extends JFrame {
 					if(rightStats == null)
 					{
 						log.error("DocumentStats for " + name + " not found");
+						return;
 					}
 					
+					//sort this shit
+					Ordering<Map.Entry<String, WordStats>> byMapValues = new Ordering<Map.Entry<String, WordStats>>() {
+					   @Override
+					   public int compare(Map.Entry<String, WordStats> left, Map.Entry<String, WordStats> right) {
+					        return right.getValue().getWordCount().compareTo(left.getValue().getWordCount());
+					   }
+					};
+					List<Map.Entry<String, WordStats>> listOfWordsSorted = Lists.newArrayList(rightStats.entrySet());
+				    Collections.sort(listOfWordsSorted, byMapValues);
+					
 					List<String> listOfWords = new ArrayList<String>();
-					for (Map.Entry<String, WordStats> me : rightStats.entrySet()) {
+					for (Map.Entry<String, WordStats> me : listOfWordsSorted) {
 						listOfWords.add(me.getValue().getWordCount() + "/" +
 									me.getValue().getSentenceCount() + "/" + 
 								    me.getValue().getTfidf() + "   " + me.getKey());
@@ -215,8 +250,14 @@ public class BigramsGUI extends JFrame {
 		rightPanel.add(rightpane);
 		//endof rightpanel
 		
-		//last
-		add(panel);
+		return panel;
+	}
+	
+	
+	private void initUI() {
+
+		add(wordsPanel());
+		
 		pack();
 		setTitle(WINDOW_TITLE);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -228,7 +269,7 @@ public class BigramsGUI extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				BigramsGUI ex = new BigramsGUI(new DummyStatsMaker());
+				BigramsGUI ex = new BigramsGUI(new PrintStatsMaker(new DataProvider()));
 				ex.setVisible(true);
 			}
 		});
