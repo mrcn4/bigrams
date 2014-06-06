@@ -184,24 +184,18 @@ public class BigramsPanel extends JPanel {
 
 			row.add(me.getValue());
 
-			String P_Bigram = String.format("%.4f", (me.getValue()) * 1.0
-					/ statsMaker.getGlobalBigramCount());
-			row.add((me.getValue()) * 1.0
-					/ statsMaker.getGlobalBigramCount());
+			row.add((statsMaker.getSentenceBigramCount().get(me.getKey())) * 1.0
+					/ statsMaker.getGlobalSentenceCount());
 
 			String firstWord = me.getKey().split(", ")[0];
-			Long firstWordCount = statsMaker.getGlobalCount().get(firstWord);
-			String P_s1 = String.format("%.4f", firstWordCount * 1.0
-					/ statsMaker.getGlobalWordCount());
+			Long firstWordCount = statsMaker.getSentenceCount().get(firstWord);
 			row.add(firstWordCount * 1.0
-					/ statsMaker.getGlobalWordCount());
+					/ statsMaker.getGlobalSentenceCount());
 
-			String secondWord = me.getKey().split(", ")[0];
-			Long secondWordCount = statsMaker.getGlobalCount().get(secondWord);
-			String P_s2 = String.format("%.4f", secondWordCount * 1.0
-					/ statsMaker.getGlobalWordCount());
+			String secondWord = me.getKey().split(", ")[1];
+			Long secondWordCount = statsMaker.getSentenceCount().get(secondWord);
 			row.add(secondWordCount * 1.0
-					/ statsMaker.getGlobalWordCount());
+					/ statsMaker.getGlobalSentenceCount());
 
 			data.add(row);
 		}

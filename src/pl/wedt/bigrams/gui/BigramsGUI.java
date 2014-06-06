@@ -100,6 +100,7 @@ public class BigramsGUI extends JFrame {
 				String[] choosenPOSStringArray = Arrays.copyOf(
 						choosenPOSObjectList,choosenPOSObjectList.length,String[].class);
 				log.debug("choosenPOSStringArray " + Arrays.toString(choosenPOSStringArray));
+				statsMaker = new PrintStatsMaker(new DataProvider());
 				statsMaker.setPosFilter(choosenPOSStringArray);
 				statsMaker.setStopFlag(false);
 				statsMaker.computeStats();
@@ -115,7 +116,7 @@ public class BigramsGUI extends JFrame {
 			
 		});
 		thread.start();
-		
+		exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleWithFixedDelay(new Runnable() {
 			  @Override
 			  public void run() {
@@ -126,7 +127,7 @@ public class BigramsGUI extends JFrame {
 
 
 protected void updateProgress() {
-
+	setStatus("Progress: " + statsMaker.getDocumentsCompleted()*1.0/statsMaker.getDocumentCount() + "%");
 }
 
 	
