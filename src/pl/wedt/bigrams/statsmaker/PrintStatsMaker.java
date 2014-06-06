@@ -197,7 +197,6 @@ public class PrintStatsMaker implements IStatsMaker {
 						if (w1.toString().equals(w2.toString()) 
 							|| posFilter.indexOf(w1.getPOS()) == -1 
 							|| posFilter.indexOf(w2.getPOS()) == -1) {
-							System.err.println("continue");
 							continue;
 						}
 						
@@ -223,8 +222,6 @@ public class PrintStatsMaker implements IStatsMaker {
 						dfbs.getWordStats().put(fbg, fbs);
 					}
 				}
-				
-				System.err.println(dfbs);
 				
 				for (String fbg: uniqueSentenceFunnyBigrams) {
 					WordStats fbs = dfbs.getWordStats().get(fbg);
