@@ -189,7 +189,7 @@ public class BigramsGUI extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 	    JMenu fileMenu = new JMenu("Menu");
 
-        ActionListener printListener = new ActionListener(  ) {
+        ActionListener menuActionListener = new ActionListener(  ) {
             public void actionPerformed(ActionEvent event) {
                menuAction(event.getActionCommand(  ));
             }
@@ -197,15 +197,15 @@ public class BigramsGUI extends JFrame {
         
 	    JMenuItem item = new JMenuItem(MENU_RUN);
 	    fileMenu.add(item);
-        item.addActionListener(printListener);
+        item.addActionListener(menuActionListener);
         
         item = new JMenuItem(MENU_CHOOSE_POS);
 	    fileMenu.add(item);
-        item.addActionListener(printListener);
+        item.addActionListener(menuActionListener);
         
         item = new JMenuItem(MENU_EXIT);
 	    fileMenu.add(item);
-        item.addActionListener(printListener);
+        item.addActionListener(menuActionListener);
         
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
@@ -232,8 +232,8 @@ public class BigramsGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		run(new PrintStatsMaker(new DataProvider()));
-
+		//run(new PrintStatsMaker(new DataProvider()));
+		run(new DummyStatsMaker());
 	}
 
 	private static void run(final IStatsMaker statsMaker) {

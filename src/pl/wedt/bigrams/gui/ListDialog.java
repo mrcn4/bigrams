@@ -44,11 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
- 
-/*
- * ListDialog.java is meant to be used by programs such as
- * ListDialogRunner.  It requires no additional files.
- */
+
  
 /**
  * Use this modal dialog to let the user choose one string from a long
