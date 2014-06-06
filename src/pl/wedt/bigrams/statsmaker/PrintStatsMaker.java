@@ -65,9 +65,9 @@ public class PrintStatsMaker implements IStatsMaker {
 			DocumentStats ds = new DocumentStats(doc);
 			Set<Word> uniqueWords = new HashSet<Word>();
 			
-			for(Sentence s: doc.getSentences()) {
+			for (Sentence s: doc.getSentences()) {
 				globalSentenceCount++;
-				for(Word w: s.getWords()) {	
+				for (Word w: s.getWords()) {	
 					uniqueWords.add(w);
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
@@ -94,7 +94,7 @@ public class PrintStatsMaker implements IStatsMaker {
 				
 				Set<Word> uniqueSentenceWords = new HashSet<>(s.getWords());
 				
-				for(Word w: uniqueSentenceWords) {
+				for (Word w: uniqueSentenceWords) {
 					
 					WordStats ws = ds.getWordStats().get(getWord(w));
 					
@@ -113,7 +113,19 @@ public class PrintStatsMaker implements IStatsMaker {
 			}
 			docStats.add(ds);
 			
-			
+			for (Word w : uniqueWords) {
+				Long wordFreq = documentFreq.get(getWord(w));
+				if (wordFreq == null) {
+					wordFreq = 0L;
+				}
+				documentFreq.put(getWord(w), wordFreq+1);
+			}
+		}
+		
+		for (DocumentStats ds: docStats) {
+			for (String w : ds.getWordStats().keySet()) {
+				ds.getWordStats().get(w).setTfidf(ds.getWordStats().get(w).getWordCount() * Math.log(documents.size() / documentFreq.get(w)));
+			}
 		}
 	}
 
