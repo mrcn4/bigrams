@@ -100,7 +100,7 @@ public class PrintStatsMaker implements IStatsMaker {
 				
 				//single words and bigrams
 				for (Word w: s.getWords()) {
-					if (posFilter.indexOf(w.getPOS()) != -1)
+					if (posFilter.indexOf(w.getPOS()) == -1)
 						continue;
 					
 					uniqueWords.add(getWord(w));
@@ -190,8 +190,10 @@ public class PrintStatsMaker implements IStatsMaker {
 					for (Word w2: s.getWords()) {
 						if (w1.toString().equals(w2.toString()) 
 							|| posFilter.indexOf(w1.getPOS()) == -1 
-							|| posFilter.indexOf(w2.getPOS()) == -1)
+							|| posFilter.indexOf(w2.getPOS()) == -1) {
+							System.err.println("continue");
 							continue;
+						}
 						
 						String fbg = getBigram(w1, w2);
 						globalFunnyBigramCount++;
@@ -213,7 +215,6 @@ public class PrintStatsMaker implements IStatsMaker {
 						}
 						fbs.setWordCount(funnyBigramDocumentCount+1);
 						dfbs.getWordStats().put(fbg, fbs);
-						
 					}
 				}
 				

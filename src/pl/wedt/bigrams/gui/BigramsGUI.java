@@ -100,7 +100,7 @@ public class BigramsGUI extends JFrame {
 				String[] choosenPOSStringArray = Arrays.copyOf(
 						choosenPOSObjectList,choosenPOSObjectList.length,String[].class);
 				
-				//statsMaker.setPosFilter(choosenPOSStringArray);
+				statsMaker.setPosFilter(choosenPOSStringArray);
 				statsMaker.setStopFlag(false);
 				statsMaker.computeStats();
 				exec.shutdown();
