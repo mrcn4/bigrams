@@ -14,6 +14,7 @@ import pl.wedt.bigrams.gui.BigramsGUI;
 public class DummyStatsMaker implements IStatsMaker{
 	private Long globalSentenceCount;
 	private List<String> posFilter;
+	private Long documentsCompleted;
 	
 	private Map<String, Long> globalCount;
 	private Map<String, Long> sentenceCount;
@@ -42,6 +43,7 @@ public class DummyStatsMaker implements IStatsMaker{
 	public DummyStatsMaker() {
 		this.globalSentenceCount = 0L;
 		this.posFilter = new ArrayList<>();
+		this.documentsCompleted = 0L;
 		
 		this.globalCount = new HashMap<>();
 		this.docStats = new ArrayList<>();
@@ -444,6 +446,15 @@ public class DummyStatsMaker implements IStatsMaker{
 
 	public void setDocumentFreq(Map<String, Long> documentFreq) {
 		this.documentFreq = documentFreq;
+	}
+	
+
+	public Long getDocumentsCompleted() {
+		return documentsCompleted;
+	}
+
+	public void setDocumentsCompleted(Long documentsCompleted) {
+		this.documentsCompleted = documentsCompleted;
 	}
 	
 }
