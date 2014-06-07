@@ -1,12 +1,6 @@
 package pl.wedt.bigrams;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream.GetField;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
