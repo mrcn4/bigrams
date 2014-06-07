@@ -12,6 +12,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.logging.RedwoodConfiguration;
 
 public class StanfordLemmatizer {
 
@@ -24,13 +25,13 @@ public class StanfordLemmatizer {
 		props = new Properties();
 		props.put("annotators", "tokenize, ssplit, pos, lemma");
 
-		//RedwoodConfiguration.empty().capture(System.err).apply();
+		RedwoodConfiguration.empty().capture(System.err).apply();
 		
 		// StanfordCoreNLP loads a lot of models, so you probably
 		// only want to do this once per execution
 		pipeline = new StanfordCoreNLP(props);
 		
-		//RedwoodConfiguration.current().clear().apply();
+		RedwoodConfiguration.current().clear().apply();
 	}
 	
 	public static List<CoreMap> getSentences(String documentText)
