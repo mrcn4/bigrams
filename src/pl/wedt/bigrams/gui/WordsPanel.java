@@ -1,6 +1,7 @@
 package pl.wedt.bigrams.gui;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -40,6 +41,8 @@ public class WordsPanel extends JPanel{
 		COLUMN_NAMES_LEFT.add("Word");
 		COLUMN_NAMES_LEFT.add("Count");
 		COLUMN_NAMES_LEFT.add("In Sentences");
+		COLUMN_NAMES_LEFT.add("Document count");
+		COLUMN_NAMES_LEFT.add("Document percent");
 		
 		COLUMN_NAMES_RIGHT.add("Word");
 		COLUMN_NAMES_RIGHT.add("Count");
@@ -132,12 +135,6 @@ public class WordsPanel extends JPanel{
 			}
 		}
 		
-		if(rightStats == null)
-		{
-			log.error("DocumentStats for " + name + " not found");
-			return;
-		}
-		
 		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
@@ -152,16 +149,26 @@ public class WordsPanel extends JPanel{
 		updateRightList(data);
 	}
 	
-	private void updateLeftTable(List<List<Object>> data) {
-		this.leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);		
+	private void updateLeftTable(final List<List<Object>> data) {
+		EventQueue.invokeLater(new Runnable() { 
+        public void run() { 
+			leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);
+        }});
+	
 	}
 
-	private void updateCenterList(List<String> list) {
-		this.centerlist.setListData(list.toArray());
+	private void updateCenterList(final List<String> list) {
+		EventQueue.invokeLater(new Runnable() { 
+	    public void run() { 
+	        	centerlist.setListData(list.toArray());
+        }});
 	}
 
-	private void updateRightList(List<List<Object>> data) {
-		this.rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
+	private void updateRightList(final List<List<Object>> data) {
+		EventQueue.invokeLater(new Runnable() { 
+		    public void run() {
+		    	rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
+		    }});
 	}
 	
 	public void updateStats(IStatsMaker statsMaker)
@@ -180,7 +187,9 @@ public class WordsPanel extends JPanel{
 			row.add(me.getKey());
 			row.add(me.getValue());
 			row.add(statsMaker.getSentenceCount().get(me.getKey()));
-
+			row.add(statsMaker.getDocumentFreq().get(me.getKey()));
+			row.add(statsMaker.getDocumentFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
+			
 			data.add(row);
 		}
 		updateLeftTable(data);

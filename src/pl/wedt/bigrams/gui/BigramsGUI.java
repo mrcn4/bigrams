@@ -112,6 +112,7 @@ public class BigramsGUI extends JFrame {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				setStatus("Updating UI...");
 				updatePanels();
 				switchGUIWhileComputing(false);
 				if (statsMaker.isStopFlag()) {

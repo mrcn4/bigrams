@@ -119,8 +119,7 @@ public class SortingTable extends JPanel {
 		private List<List<Object>> data;
     	
     	public MyTableModel(List<String> columnNames, List<List<Object>> data) {
-			this.columnNames = columnNames;
-			this.data = data;
+    		setNewData(columnNames,data);
 		}
 
         public int getColumnCount() {
@@ -156,6 +155,16 @@ public class SortingTable extends JPanel {
         public void setNewData(List<String> columnNames, List<List<Object>> data)
         {
         	this.columnNames = columnNames;
+        	if(data == null || data.size() == 0)
+        	{
+        		data = new ArrayList<List<Object>>();
+        		List<Object> emptyrow = new ArrayList<Object>();
+        		for(String col: columnNames)
+        		{
+        			emptyrow.add("");
+        		}
+        		data.add(emptyrow);
+        	}
 			this.data = data;
 			fireTableStructureChanged();
         	fireTableDataChanged();

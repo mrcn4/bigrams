@@ -1,12 +1,16 @@
 package pl.wedt.bigrams;
 
 import java.io.ObjectInputStream.GetField;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.dataprovider.POS;
+import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
+import pl.wedt.bigrams.statsmaker.StatsMakerSerializer;
 
 
 public class MainClass {
@@ -32,7 +36,15 @@ public class MainClass {
 		
 		DataProvider dataProvider = new DataProvider();
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
+
+		Object[] choosenPOSObjectList = POS.getDefaultPOS().toArray();
+		String[] choosenPOSStringArray = Arrays.copyOf(
+				choosenPOSObjectList, choosenPOSObjectList.length,
+				String[].class);
+		printStatsMaker.setPosFilter(choosenPOSStringArray);
 		printStatsMaker.computeStats();
+		
+		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
 	}
 
 }

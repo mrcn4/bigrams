@@ -1,6 +1,7 @@
 package pl.wedt.bigrams.gui;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -41,6 +42,9 @@ public class BigramsPanel extends JPanel {
 		// FIXME
 		COLUMN_NAMES_LEFT.add("Bigram");
 		COLUMN_NAMES_LEFT.add("Count");
+		COLUMN_NAMES_LEFT.add("In Sentences");
+		COLUMN_NAMES_LEFT.add("Document count");
+		COLUMN_NAMES_LEFT.add("Document percent");
 		COLUMN_NAMES_LEFT.add("PB");
 		COLUMN_NAMES_LEFT.add("P1");
 		COLUMN_NAMES_LEFT.add("P2");
@@ -137,8 +141,8 @@ public class BigramsPanel extends JPanel {
 
 		if (rightStats == null) {
 			log.error("DocumentStats for " + name + " not found");
-			return;
 		}
+		
 		List<List<Object>> data = new ArrayList<List<Object>>();
 
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
@@ -153,22 +157,31 @@ public class BigramsPanel extends JPanel {
 		updateRightList(data);
 	}
 
-	private void updateLeftTable(List<List<Object>> data) {
-		this.leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);
-		this.leftlist.packMeNow();
-		
+	private void updateLeftTable(final List<List<Object>> data) {
+		EventQueue.invokeLater(new Runnable() { 
+        public void run() { 
+			leftlist.getModel().setNewData(COLUMN_NAMES_LEFT, data);
+        }});
+	
 	}
 
-	private void updateCenterList(List<String> list) {
-		this.centerlist.setListData(list.toArray());
+	private void updateCenterList(final List<String> list) {
+		EventQueue.invokeLater(new Runnable() { 
+	    public void run() { 
+	        	centerlist.setListData(list.toArray());
+        }});
 	}
 
-	private void updateRightList(List<List<Object>> data) {
-		this.rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
+	private void updateRightList(final List<List<Object>> data) {
+		EventQueue.invokeLater(new Runnable() { 
+		    public void run() {
+		    	rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
+		    }});
 	}
 
 
 	public void updateStats(IStatsMaker statsMaker) {
+		log.debug("Updating stats " + statsMaker.getBigramCount().size());
 		// save for later
 		docStats = statsMaker.getDocBigramStats();
 
@@ -184,6 +197,11 @@ public class BigramsPanel extends JPanel {
 
 			row.add(me.getValue());
 
+			row.add(statsMaker.getSentenceBigramCount().get(me.getKey()));
+			
+			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey()));
+			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
+			
 			row.add((statsMaker.getSentenceBigramCount().get(me.getKey())) * 1.0
 					/ statsMaker.getGlobalSentenceCount());
 
