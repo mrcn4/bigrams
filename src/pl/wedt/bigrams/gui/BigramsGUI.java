@@ -26,8 +26,11 @@ import org.apache.log4j.Logger;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.POS;
+import pl.wedt.bigrams.gui.panels.AllPairBigramsPanel;
+import pl.wedt.bigrams.gui.panels.BigramsPanel;
+import pl.wedt.bigrams.gui.panels.WordsPanel;
+import pl.wedt.bigrams.gui.utils.ListDialog;
 import pl.wedt.bigrams.statsmaker.BasicFormStatsMaker;
-import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 import pl.wedt.bigrams.statsmaker.RawFormStatsMaker;
@@ -267,7 +270,7 @@ public class BigramsGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		run(new PrintStatsMaker(new DataProvider()));
+		run(new PrintStatsMaker(new DataProvider("config.properties")));
 		// run(new DummyStatsMaker());
 	}
 

@@ -2,11 +2,7 @@ package pl.wedt.bigrams;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream.GetField;
-<<<<<<< HEAD
-=======
 import java.util.ArrayList;
->>>>>>> branch 'master' of https://github.com/mrcn4/bigrams.git
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -14,7 +10,6 @@ import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.POS;
-import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 import pl.wedt.bigrams.statsmaker.StatsMakerSerializer;
@@ -40,8 +35,8 @@ public class MainClass {
 	}
 	
 	public static void main(String[] args) {
-		
-		DataProvider dataProvider = new DataProvider();
+
+		DataProvider dataProvider = new DataProvider("config.properties");
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
 
 
@@ -49,11 +44,12 @@ public class MainClass {
 		String[] choosenPOSStringArray = Arrays.copyOf(
 				choosenPOSObjectList, choosenPOSObjectList.length,
 				String[].class);
+		printStatsMaker.setStopFlag(false);
 		printStatsMaker.setPosFilter(choosenPOSStringArray);
 		printStatsMaker.computeStats();
 		
 		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
-		return;
+		System.exit(0);
 		
 		List<File> directories = new ArrayList<>();
 		directories.add(new File("testfiles"));

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pl.wedt.bigrams.dataprovider.Document;
-import pl.wedt.bigrams.dataprovider.Word;
 
 
 public class DocumentStats {

@@ -1,4 +1,4 @@
-package pl.wedt.bigrams.gui;
+package pl.wedt.bigrams.gui.utils;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -31,19 +31,35 @@ package pl.wedt.bigrams.gui;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-import javax.swing.*;
-
-import com.google.common.primitives.Ints;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+
+import com.google.common.primitives.Ints;
 
  
 /**
@@ -65,8 +81,7 @@ public class ListDialog extends JDialog
                         implements ActionListener {
     private static ListDialog dialog;
     private static List<String> value = null;
-    private JList list;
-	private Map<String, String> map;
+    private JList<String> list;
  
     /**
      * Set up and show the dialog.  The first Component argument
@@ -106,7 +121,6 @@ public class ListDialog extends JDialog
                        List<String> initialValues,
                        String longValue) {
         super(frame, title, true);
-		this.map = map;
  
         //Create and initialize the buttons.
         JButton cancelButton = new JButton("Cancel");
@@ -126,7 +140,7 @@ public class ListDialog extends JDialog
         {
         	defaultListModel.addElement(key);
         }
-        list = new JList(defaultListModel);
+        list = new JList<String>(defaultListModel);
 
  
         list.addMouseMotionListener(new MouseMotionListener() {
@@ -200,7 +214,6 @@ public class ListDialog extends JDialog
         }
         
 		//Initialize values.
-        //FIXME: setValue(initialValue);
         list.setSelectedIndices(Ints.toArray(indices));
         pack();
         setLocationRelativeTo(frame);
