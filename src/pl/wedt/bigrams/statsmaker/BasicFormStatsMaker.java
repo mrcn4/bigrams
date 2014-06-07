@@ -10,6 +10,6 @@ public class BasicFormStatsMaker extends PrintStatsMaker {
 	
 	@Override
 	protected String getWord(Word w) {
-		return w.getBasicForm();
+		return w.getBasicForm().toLowerCase();
 	}
 }

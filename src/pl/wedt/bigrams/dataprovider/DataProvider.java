@@ -47,6 +47,9 @@ public class DataProvider {
 	{
 		LinkedList<Document> listOfDocs = new LinkedList<Document>();
 		for(File directory : directories) {			
+			if (!directory.exists() || !directory.isDirectory())
+				continue;
+			
 			for(File f: directory.listFiles())
 			{
 				if(f.isFile())

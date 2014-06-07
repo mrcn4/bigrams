@@ -3,10 +3,7 @@ package pl.wedt.bigrams;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream.GetField;
-<<<<<<< HEAD
-=======
 import java.util.ArrayList;
->>>>>>> branch 'master' of https://github.com/mrcn4/bigrams.git
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -55,7 +52,7 @@ public class MainClass {
 		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
 		return;
 		
-		List<File> directories = new ArrayList<>();
+		/*List<File> directories = new ArrayList<>();
 		directories.add(new File("testfiles"));
 		
 		String[] posFilter = {"VB", "VBG", "VBZ"};
@@ -72,7 +69,7 @@ public class MainClass {
 			System.err.println("Oh my.");
 		}
 		
-		return;
+		return; */
 	}
 
 }

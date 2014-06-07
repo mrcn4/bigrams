@@ -278,6 +278,16 @@ public class PrintStatsMaker implements IStatsMaker {
 				ds.getWordStats().get(w).setTfidf((double)ds.getWordStats().get(w).getWordCount() * Math.log((double)documents.size() / (double)documentFreq.get(w)));
 			}
 		}
+		for (DocumentStats dbs: docBigramStats) {
+			for (String w : dbs.getWordStats().keySet()) {
+				dbs.getWordStats().get(w).setTfidf((double)dbs.getWordStats().get(w).getWordCount() * Math.log((double)documents.size() / (double)documentBigramFreq.get(w)));
+			}
+		}
+		for (DocumentStats dfbs: docFunnyBigramStats) {
+			for (String w : dfbs.getWordStats().keySet()) {
+				dfbs.getWordStats().get(w).setTfidf((double)dfbs.getWordStats().get(w).getWordCount() * Math.log((double)documents.size() / (double)documentFunnyBigramFreq.get(w)));
+			}
+		}
 	}
 	
 	protected String getBigram(Word w1, Word w2) {

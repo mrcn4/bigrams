@@ -10,6 +10,6 @@ public class RawFormStatsMaker extends PrintStatsMaker {
 	
 	@Override
 	protected String getWord(Word w) {
-		return w.getRawForm();
+		return w.getRawForm().toLowerCase();
 	}
 }
