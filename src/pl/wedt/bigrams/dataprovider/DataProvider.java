@@ -1,37 +1,64 @@
 package pl.wedt.bigrams.dataprovider;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 public class DataProvider {
 	
-	private File directory;
+	private List<File> directories;
+	private List<String> posFilterList;
 
 	/**
 	 * TEMP 
 	 */
 	public DataProvider() {
-		directory = new File("testfiles");
+		directories = new ArrayList<File>();
+		posFilterList = new ArrayList<String>();
 	}
 	
 	public DataProvider(String XMLFilepath)
 	{
-		throw new UnsupportedOperationException();
+		directories = new ArrayList<File>();
+		posFilterList = new ArrayList<String>();
+		Properties newprops = new Properties();
+		
+		try {
+			FileInputStream fis = new FileInputStream(new File(XMLFilepath));
+			newprops.loadFromXML(fis);
+		} catch (Exception e) {
+			System.err.println("Oh my.");
+		}
+		
+		for (String path : newprops.getProperty("directories").replaceAll("\\[", "").replaceAll("\\]", "").split("[,]")) {
+			directories.add(new File(path));
+		}
+		for (String pos : newprops.getProperty("posfilter").replaceAll("\\[", "").replaceAll("\\]", "").split("[,]")) {
+			posFilterList.add(pos);
+		}
 	}
 	
 	public List<Document> getDocuments()
 	{
 		LinkedList<Document> listOfDocs = new LinkedList<Document>();
-		new LinkedList<File>();
-		for(File f: directory.listFiles())
-		{
-			if(f.isFile())
+		for(File directory : directories) {			
+			for(File f: directory.listFiles())
 			{
-				listOfDocs.add(new Document(f));
+				if(f.isFile())
+				{
+					listOfDocs.add(new Document(f));
+				}
 			}
 		}
 		return listOfDocs;
 	}
-	
+
+	public List<String> getPosFilterList() {
+		return posFilterList;
+	}
 }

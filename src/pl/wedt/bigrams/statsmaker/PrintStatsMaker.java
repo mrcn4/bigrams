@@ -109,9 +109,6 @@ public class PrintStatsMaker implements IStatsMaker {
 					if (posFilter.indexOf(w.getPOS()) == -1)
 						continue;
 					
-					if(getWord(w).equals("better"))
-						System.err.println("{" + getWord(w) + "," + w.getPOS() + "}");
-					
 					uniqueWords.add(getWord(w));
 					uniqueSentenceWords.add(getWord(w));
 					

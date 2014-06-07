@@ -135,7 +135,7 @@ public class BigramsGUI extends JFrame {
 	}
 
 	protected void updateProgress() {
-		setStatus("Progress: " + statsMaker.getDocumentsCompleted() * 1.0
+		setStatus("Progress: " + statsMaker.getDocumentsCompleted() * 100.0
 				/ statsMaker.getDocumentCount() + "%");
 	}
 
@@ -178,11 +178,11 @@ public class BigramsGUI extends JFrame {
 	private void menuAction(String action) {
 		switch (action) {
 		case MENU_RUN_RAW:
-			statsMaker = new RawFormStatsMaker(new DataProvider());
+			statsMaker = new RawFormStatsMaker(new DataProvider("config.properties"));
 			computeStats();
 			break;
 		case MENU_RUN_BASIC:
-			statsMaker = new BasicFormStatsMaker(new DataProvider());
+			statsMaker = new BasicFormStatsMaker(new DataProvider("config.properties"));
 			computeStats();
 			break;
 		case MENU_STOP:

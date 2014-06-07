@@ -1,8 +1,15 @@
 package pl.wedt.bigrams;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream.GetField;
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+>>>>>>> branch 'master' of https://github.com/mrcn4/bigrams.git
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
@@ -37,6 +44,7 @@ public class MainClass {
 		DataProvider dataProvider = new DataProvider();
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
 
+
 		Object[] choosenPOSObjectList = POS.getDefaultPOS().toArray();
 		String[] choosenPOSStringArray = Arrays.copyOf(
 				choosenPOSObjectList, choosenPOSObjectList.length,
@@ -45,6 +53,26 @@ public class MainClass {
 		printStatsMaker.computeStats();
 		
 		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
+		return;
+		
+		List<File> directories = new ArrayList<>();
+		directories.add(new File("testfiles"));
+		
+		String[] posFilter = {"VB", "VBG", "VBZ"};
+		
+		Properties newprops = new Properties();
+		
+		newprops.setProperty("directories", directories.toString());
+		newprops.setProperty("posfilter", Arrays.toString(posFilter));
+		
+		try {
+			FileOutputStream fos = new FileOutputStream(new File("config.properties"));
+			newprops.storeToXML(fos, "");
+		} catch (Exception e) {
+			System.err.println("Oh my.");
+		}
+		
+		return;
 	}
 
 }
