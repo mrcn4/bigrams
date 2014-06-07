@@ -9,13 +9,14 @@ import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 
-import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.Document;
+import pl.wedt.bigrams.dataprovider.IDataProvider;
+import pl.wedt.bigrams.dataprovider.IDocument;
 import pl.wedt.bigrams.dataprovider.Sentence;
 import pl.wedt.bigrams.dataprovider.Word;
 
 public class PrintStatsMaker implements IStatsMaker {
-	private DataProvider dp;
+	private IDataProvider dp;
 	private Long globalSentenceCount;
 	private List<String> posFilter;
 	private Long documentsCompleted;
@@ -42,7 +43,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	private Map<String, Long> documentFunnyBigramFreq;
 	private Long globalFunnyBigramCount;
 
-	public PrintStatsMaker(DataProvider dp) {
+	public PrintStatsMaker(IDataProvider dp) {
 		this.dp = dp;
 		this.globalSentenceCount = 0L;
 		this.posFilter = new ArrayList<>();
@@ -83,9 +84,9 @@ public class PrintStatsMaker implements IStatsMaker {
 	public void computeStats()
 	{
 		//get documents
-		List<Document> documents = dp.getDocuments();
+		List<IDocument> documents = dp.getDocuments();
 		
-		for (Document doc : documents) {
+		for (IDocument doc : documents) {
 			if (stopFlag)
 				break;
 			
@@ -608,36 +609,47 @@ public class PrintStatsMaker implements IStatsMaker {
 	}
 
 
-
+	@Override
 	public Long getGlobalSentenceCount() {
 		return globalSentenceCount;
 	}
 
 
-
+	@Override
 	public void setGlobalSentenceCount(Long globalSentenceCount) {
 		this.globalSentenceCount = globalSentenceCount;
 	}
 
 
-
+	@Override
 	public Long getDocumentsCompleted() {
 		return documentsCompleted;
 	}
 
 
-
+	@Override
 	public void setDocumentsCompleted(Long documentsCompleted) {
 		this.documentsCompleted = documentsCompleted;
 	}
 	
-
+	@Override
 	public boolean isStopFlag() {
 		return stopFlag;
 	}
 
 
+	@Override
 	public void setStopFlag(boolean stopFlag) {
 		this.stopFlag = stopFlag;
+	}
+
+	@Override
+	public IDataProvider getDataProvider() {
+		return dp;
+	}
+
+	@Override
+	public void setDataProvider(IDataProvider dp) {
+		this.dp = dp;
 	}
 }

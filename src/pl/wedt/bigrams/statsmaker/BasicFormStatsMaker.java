@@ -1,10 +1,10 @@
 package pl.wedt.bigrams.statsmaker;
 
-import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.dataprovider.IDataProvider;
 import pl.wedt.bigrams.dataprovider.Word;
 
 public class BasicFormStatsMaker extends PrintStatsMaker {
-	public BasicFormStatsMaker(DataProvider dp) {
+	public BasicFormStatsMaker(IDataProvider dp) {
 		super(dp);
 	}
 	

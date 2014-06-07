@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
+import pl.wedt.bigrams.dataprovider.IDataProvider;
 import pl.wedt.bigrams.dataprovider.POS;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
@@ -37,7 +38,7 @@ public class MainClass {
 	
 	public static void main(String[] args) {
 
-		DataProvider dataProvider = new DataProvider("config.properties");
+		IDataProvider dataProvider = new DataProvider("config.properties");
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
 
 

@@ -3,14 +3,14 @@ package pl.wedt.bigrams.statsmaker;
 import java.util.HashMap;
 import java.util.Map;
 
-import pl.wedt.bigrams.dataprovider.Document;
+import pl.wedt.bigrams.dataprovider.IDocument;
 
 
 public class DocumentStats {
 	private String docName;
 	private Map<String, WordStats> wordStats;
 	
-	public DocumentStats(Document doc) {
+	public DocumentStats(IDocument doc) {
 		this.docName = doc.getName();
 		this.wordStats = new HashMap<>();
 	}

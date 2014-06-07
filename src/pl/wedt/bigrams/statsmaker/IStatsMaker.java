@@ -3,6 +3,8 @@ package pl.wedt.bigrams.statsmaker;
 import java.util.List;
 import java.util.Map;
 
+import pl.wedt.bigrams.dataprovider.IDataProvider;
+
 public interface IStatsMaker {
 
 	/* (non-Javadoc)
@@ -117,5 +119,9 @@ public interface IStatsMaker {
 	public abstract boolean isStopFlag();
 
 	public abstract void setStopFlag(boolean stopFlag);
+	
+	public abstract IDataProvider getDataProvider();
+	
+	public abstract void setDataProvider(IDataProvider dp);
 
 }

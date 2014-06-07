@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class DataProvider {
+public class DataProvider implements IDataProvider {
 	
 	private List<File> directories;
 	private List<String> posFilterList;
@@ -25,17 +25,21 @@ public class DataProvider {
 			System.err.println("Oh my.");
 		}
 		
-		for (String path : newprops.getProperty("directories").replaceAll("\\[", "").replaceAll("\\]", "").split("[,]")) {
+		for (String path : newprops.getProperty("directories").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
 			directories.add(new File(path));
 		}
-		for (String pos : newprops.getProperty("posfilter").replaceAll("\\[", "").replaceAll("\\]", "").split("[,]")) {
+		for (String pos : newprops.getProperty("posfilter").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
 			posFilterList.add(pos);
 		}
 	}
 	
-	public List<Document> getDocuments()
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.dataprovider.IDataProvider#getDocuments()
+	 */
+	@Override
+	public List<IDocument> getDocuments()
 	{
-		LinkedList<Document> listOfDocs = new LinkedList<Document>();
+		LinkedList<IDocument> listOfDocs = new LinkedList<IDocument>();
 		for(File directory : directories) {			
 			if (!directory.exists() || !directory.isDirectory())
 				continue;
@@ -51,6 +55,10 @@ public class DataProvider {
 		return listOfDocs;
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.dataprovider.IDataProvider#getPosFilterList()
+	 */
+	@Override
 	public List<String> getPosFilterList() {
 		return posFilterList;
 	}
