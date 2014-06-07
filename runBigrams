@@ -1,0 +1,2 @@
+cp target/bigrams-0.0.1-SNAPSHOT.jar .
+java -jar bigrams-0.0.1-SNAPSHOT.jar

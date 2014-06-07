@@ -29,7 +29,7 @@ public class WordsPanel extends JPanel{
 	
 	private final String LEFT_LABEL = "Global words frequency";
 	private final String CENTER_LABEL = "Document list (click to see details)";
-	private final String RIGHT_LABEL = "Word statistics for document (count,sentenceCount,tfidf)";
+	private final String RIGHT_LABEL = "Word statistics for document";
 	
 	private final static List<String> COLUMN_NAMES_LEFT = new ArrayList<>();
 	private final static List<String> COLUMN_NAMES_RIGHT = new ArrayList<>();

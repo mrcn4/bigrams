@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import pl.wedt.bigrams.dataprovider.DummyDataProvider;
+import pl.wedt.bigrams.dataprovider.IDataProvider;
 import pl.wedt.bigrams.dataprovider.Word;
 
 public class DummyStatsMaker implements IStatsMaker{
@@ -473,6 +475,16 @@ public class DummyStatsMaker implements IStatsMaker{
 
 	public void setStopFlag(boolean stopFlag) {
 		this.stopFlag = stopFlag;
+	}
+	
+	@Override
+	public IDataProvider getDataProvider() {
+		return new DummyDataProvider();
+	}
+
+	@Override
+	public void setDataProvider(IDataProvider dp) {
+		return;
 	}
 	
 }

@@ -10,19 +10,23 @@ import java.util.List;
 import pl.wedt.bigrams.StanfordLemmatizer;
 import edu.stanford.nlp.util.CoreMap;
 
-public class Document {
+public class Document implements IDocument {
 	private File f;
 
 	public Document(File f) {
 		this.f = f;
 	}
 	
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.dataprovider.IDocument#getName()
+	 */
+	@Override
 	public String getName()
 	{
 		return f.getName();
 	}
-	
-	public String readDoc(File f) {
+
+	private String readDoc(File f) {
 		String text = "";
 		int read, N = 1024 * 1024;
 		char[] buffer = new char[N];
@@ -57,6 +61,10 @@ public class Document {
 		return text;
 	}
 	
+	/* (non-Javadoc)
+	 * @see pl.wedt.bigrams.dataprovider.IDocument#getSentences()
+	 */
+	@Override
 	public List<Sentence> getSentences()
 	{
 		List<Sentence> sentencesList = new LinkedList<Sentence>(); 

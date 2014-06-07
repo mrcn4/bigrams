@@ -6,16 +6,35 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import nu.xom.jaxen.expr.AllNodeStep;
+
 import com.google.common.base.Joiner;
 
 public class StatsMakerSerializer {
 	
+	private static final String GLOBAL = "__GLOBAL__";
+	private static final String WORD = "WORD";
+	private static final String BIGRAM = "BIGRAM";
+	private static final String PAIRBIGRAM = "PAIRBIGRAM";
+
 	public void writeToOutput(OutputStream os, IStatsMaker statsMaker) {
 		PrintStream printStream = new PrintStream(os);
 		//get words stats
 
 		// global Stats
-		printStream.println("Globals word stats");
+		printStream.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		printStream.println("<xml>");
+		printStream.println("<document>");
+		printStream.println("<docname>");
+		printStream.println(GLOBAL);
+		printStream.println("</docname>");
+		printStream.println("<type>");
+		printStream.println(WORD);
+		printStream.println("</type>");
+		printStream.println("<title>");
+		printStream.println("Globals word stats" + ":");
+		printStream.println("</title>");
+		printStream.println("<content>");
 		Map<String, Long> globalCount = statsMaker.getGlobalCount();
 		for (Map.Entry<String, Long> me : globalCount.entrySet()) {
 			ArrayList<Object> row = new ArrayList<Object>();
@@ -29,14 +48,26 @@ public class StatsMakerSerializer {
 
 			Joiner joiner = Joiner.on(";").skipNulls();
 			printStream.println(joiner.join(row));
+			break;
 		}
 
-		printStream.println();
+		printStream.println("</content>");
+		printStream.println("</document>");
 		
 		//get docwise stats
 		for(DocumentStats ds: statsMaker.getDocStats())
 		{
-			printStream.println("Document-wise word stats for " + ds.getDocName());
+			printStream.println("<document>");
+			printStream.println("<docname>");
+			printStream.println(ds.getDocName());
+			printStream.println("</docname>");
+			printStream.println("<type>");
+			printStream.println(WORD);
+			printStream.println("</type>");
+			printStream.println("<title>");
+			printStream.println("Document-wise word stats for " + ds.getDocName() + ":");
+			printStream.println("</title>");
+			printStream.println("<content>");
 			for (Entry<String, WordStats> me : ds.getWordStats().entrySet()) {
 				ArrayList<Object> row = new ArrayList<Object>();
 
@@ -47,11 +78,23 @@ public class StatsMakerSerializer {
 				
 				Joiner joiner = Joiner.on(";").skipNulls();
 				printStream.println(joiner.join(row));
+				break;
 			}
-			printStream.println();
+			printStream.println("</content>");
+			printStream.println("</document>");
 		}
 		
-		printStream.println("Global sequential-bigram stats");
+		printStream.println("<document>");
+		printStream.println("<docname>");
+		printStream.println(GLOBAL);
+		printStream.println("</docname>");
+		printStream.println("<type>");
+		printStream.println(BIGRAM);
+		printStream.println("</type>");
+		printStream.println("<title>");
+		printStream.println("Global sequential-bigram stats" + ":");
+		printStream.println("</title>");
+		printStream.println("<content>");
 		for (Map.Entry<String, Long> me : statsMaker.getBigramCount().entrySet()) {
 			ArrayList<Object> row = new ArrayList<Object>();
 
@@ -80,14 +123,25 @@ public class StatsMakerSerializer {
 
 			Joiner joiner = Joiner.on(";").skipNulls();
 			printStream.println(joiner.join(row));
+			break;
 		}
 
-
-		printStream.println();
+		printStream.println("</content>");
+		printStream.println("</document>");
 		
 		for(DocumentStats ds: statsMaker.getDocBigramStats())
 		{
-			printStream.println("Document-wise sequential-bigram stats for " + ds.getDocName());
+			printStream.println("<document>");
+			printStream.println("<docname>");
+			printStream.println(ds.getDocName());
+			printStream.println("</docname>");
+			printStream.println("<type>");
+			printStream.println(BIGRAM);
+			printStream.println("</type>");
+			printStream.println("<title>");
+			printStream.println("Document-wise sequential-bigram stats for " + ds.getDocName() + ":");
+			printStream.println("</title>");
+			printStream.println("<content>");
 			for (Entry<String, WordStats> me : ds.getWordStats().entrySet()) {
 				ArrayList<Object> row = new ArrayList<Object>();
 
@@ -98,14 +152,25 @@ public class StatsMakerSerializer {
 				
 				Joiner joiner = Joiner.on(";").skipNulls();
 				printStream.println(joiner.join(row));
+				break;
 			}
-
-			printStream.println();
+			printStream.println("</content>");
+			printStream.println("</document>");
 		}
 		
 		//all pairs bigrams
-		//global
-		printStream.println("Global all-pair-bigram stats");
+		//global			
+		printStream.println("<document>");
+		printStream.println("<docname>");
+		printStream.println(GLOBAL);
+		printStream.println("</docname>");
+		printStream.println("<type>");
+		printStream.println(PAIRBIGRAM);
+		printStream.println("</type>");
+		printStream.println("<title>");
+		printStream.println("Global all-pair-bigram stats" + ":");
+		printStream.println("</title>");
+		printStream.println("<content>");
 		for (Map.Entry<String, Long> me : statsMaker.getFunnyBigramCount().entrySet()) {
 			ArrayList<Object> row = new ArrayList<Object>();
 
@@ -134,14 +199,24 @@ public class StatsMakerSerializer {
 
 			Joiner joiner = Joiner.on(";").skipNulls();
 			printStream.println(joiner.join(row));
+			break;
 		}
-
-
-		printStream.println();
+		printStream.println("</content>");
+		printStream.println("</document>");
 		
-		for(DocumentStats ds: statsMaker.getDocBigramStats())
+		for(DocumentStats ds: statsMaker.getDocFunnyBigramStats())
 		{
-			printStream.println("Document-wise all-pair-bigram stats for " + ds.getDocName());
+			printStream.println("<document>");
+			printStream.println("<docname>");
+			printStream.println(ds.getDocName());
+			printStream.println("</docname>");
+			printStream.println("<type>");
+			printStream.println(PAIRBIGRAM);
+			printStream.println("</type>");
+			printStream.println("<title>");
+			printStream.println("Document-wise all-pair-bigram stats for " + ds.getDocName() + ":");
+			printStream.println("</title>");
+			printStream.println("<content>");
 			for (Entry<String, WordStats> me : ds.getWordStats().entrySet()) {
 				ArrayList<Object> row = new ArrayList<Object>();
 
@@ -152,11 +227,16 @@ public class StatsMakerSerializer {
 				
 				Joiner joiner = Joiner.on(";").skipNulls();
 				printStream.println(joiner.join(row));
+				break;
 			}
 
-			printStream.println();
+			printStream.println("</content>");
+			printStream.println("</document>");
 		}
-		
+
+
+		printStream.println("</xml>");
 		//get bigram stats
+		printStream.close();
 	}
 }
