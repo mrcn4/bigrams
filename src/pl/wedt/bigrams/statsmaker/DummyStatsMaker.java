@@ -7,9 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.Word;
-import pl.wedt.bigrams.gui.BigramsGUI;
 
 public class DummyStatsMaker implements IStatsMaker{
 	private Long globalSentenceCount;

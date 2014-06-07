@@ -1,9 +1,7 @@
-package pl.wedt.bigrams.gui;
+package pl.wedt.bigrams.gui.panels;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,29 +15,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellRenderer;
 
 import org.apache.log4j.Logger;
 
+import pl.wedt.bigrams.gui.utils.SortingTable;
 import pl.wedt.bigrams.statsmaker.DocumentStats;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.WordStats;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
+public class AllPairBigramsPanel extends JPanel {
 
-public class BigramsPanel extends JPanel {
-
-	private static Logger log = Logger.getLogger(BigramsPanel.class);
+	private static Logger log = Logger.getLogger(AllPairBigramsPanel.class);
 
 	private final String LEFT_LABEL = "Global bigrams frequency";
 	private final String CENTER_LABEL = "Document list (click to see details)";
 	private final String RIGHT_LABEL = "Bigrams statistics for document";
-
+	
 	private final static List<String> COLUMN_NAMES_LEFT = new ArrayList<>();
 	private final static List<String> COLUMN_NAMES_RIGHT = new ArrayList<>();
 	static {
-		// FIXME
 		COLUMN_NAMES_LEFT.add("Bigram");
 		COLUMN_NAMES_LEFT.add("Count");
 		COLUMN_NAMES_LEFT.add("In Sentences");
@@ -57,16 +51,15 @@ public class BigramsPanel extends JPanel {
 
 	private JLabel leftlabel;
 	private SortingTable leftlist;
-	
+
 	private JLabel centerlabel;
 	private JList centerlist;
-	
-	private JLabel rightlabel;
+
 	private SortingTable rightlist;
-	
+	private JLabel rightlabel;
 	List<DocumentStats> docStats;
 
-	public BigramsPanel() {
+	public AllPairBigramsPanel() {
 		// init variables
 		docStats = new ArrayList<DocumentStats>();
 
@@ -84,9 +77,8 @@ public class BigramsPanel extends JPanel {
 		leftPanel.add(leftlabel);
 
 		// init list on scroll pane
-		leftlist = new SortingTable();
+		leftlist = new SortingTable(COLUMN_NAMES_LEFT,null);
 		leftPanel.add(leftlist);
-		
 		// endof leftPanel
 
 		// centerpanel
@@ -123,10 +115,8 @@ public class BigramsPanel extends JPanel {
 		rightPanel.add(rightlabel);
 
 		// init list on scroll pane
-
-		rightlist = new SortingTable();
+		rightlist = new SortingTable(COLUMN_NAMES_RIGHT,null);
 		rightPanel.add(rightlist);
-		
 		// endof rightPanel
 	}
 
@@ -142,9 +132,9 @@ public class BigramsPanel extends JPanel {
 		if (rightStats == null) {
 			log.error("DocumentStats for " + name + " not found");
 		}
-		
 		List<List<Object>> data = new ArrayList<List<Object>>();
-
+		if(rightStats != null)
+		{
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
 			ArrayList<Object> row = new ArrayList<Object>();
 
@@ -153,6 +143,7 @@ public class BigramsPanel extends JPanel {
 			row.add(me.getValue().getSentenceCount());
 			row.add(me.getValue().getTfidf());
 			data.add(row);
+		}
 		}
 		updateRightList(data);
 	}
@@ -179,13 +170,12 @@ public class BigramsPanel extends JPanel {
 		    }});
 	}
 
-
 	public void updateStats(IStatsMaker statsMaker) {
-		log.debug("Updating stats " + statsMaker.getBigramCount().size());
+		log.debug("Updating stats " + statsMaker.getFunnyBigramCount().size());
 		// save for later
-		docStats = statsMaker.getDocBigramStats();
+		docStats = statsMaker.getDocFunnyBigramStats();
 
-		Map<String, Long> globalCount = statsMaker.getBigramCount();
+		Map<String, Long> globalCount = statsMaker.getFunnyBigramCount();
 
 		// update left pane
 		List<List<Object>> data = new ArrayList<List<Object>>();
@@ -197,12 +187,13 @@ public class BigramsPanel extends JPanel {
 
 			row.add(me.getValue());
 
-			row.add(statsMaker.getSentenceBigramCount().get(me.getKey()));
+			row.add(statsMaker.getSentenceFunnyBigramCount().get(me.getKey()));
 			
-			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey()));
-			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
+			row.add(statsMaker.getDocumentFunnyBigramFreq().get(me.getKey()));
+			row.add(statsMaker.getDocumentFunnyBigramFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
 			
-			row.add((statsMaker.getSentenceBigramCount().get(me.getKey())) * 1.0
+			
+			row.add((statsMaker.getSentenceFunnyBigramCount().get(me.getKey())) * 1.0
 					/ statsMaker.getGlobalSentenceCount());
 
 			String firstWord = me.getKey().split(", ")[0];

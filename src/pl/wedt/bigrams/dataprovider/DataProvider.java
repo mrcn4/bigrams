@@ -2,9 +2,7 @@ package pl.wedt.bigrams.dataprovider;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -13,14 +11,6 @@ public class DataProvider {
 	
 	private List<File> directories;
 	private List<String> posFilterList;
-
-	/**
-	 * TEMP 
-	 */
-	public DataProvider() {
-		directories = new ArrayList<File>();
-		posFilterList = new ArrayList<String>();
-	}
 	
 	public DataProvider(String XMLFilepath)
 	{

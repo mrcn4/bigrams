@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
 import pl.wedt.bigrams.dataprovider.POS;
-import pl.wedt.bigrams.statsmaker.DummyStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 import pl.wedt.bigrams.statsmaker.StatsMakerSerializer;
@@ -37,8 +36,8 @@ public class MainClass {
 	}
 	
 	public static void main(String[] args) {
-		
-		DataProvider dataProvider = new DataProvider();
+
+		DataProvider dataProvider = new DataProvider("config.properties");
 		IStatsMaker printStatsMaker = new PrintStatsMaker(dataProvider);
 
 
@@ -46,11 +45,12 @@ public class MainClass {
 		String[] choosenPOSStringArray = Arrays.copyOf(
 				choosenPOSObjectList, choosenPOSObjectList.length,
 				String[].class);
+		printStatsMaker.setStopFlag(false);
 		printStatsMaker.setPosFilter(choosenPOSStringArray);
 		printStatsMaker.computeStats();
 		
 		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
-		return;
+		System.exit(0);
 		
 		/*List<File> directories = new ArrayList<>();
 		directories.add(new File("testfiles"));

@@ -1,8 +1,8 @@
 package pl.wedt.bigrams.dataprovider;
 
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
 
 public class Word {
 	

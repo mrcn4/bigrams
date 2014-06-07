@@ -1,4 +1,4 @@
-package pl.wedt.bigrams.gui;
+package pl.wedt.bigrams.gui.utils;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -35,6 +35,10 @@ package pl.wedt.bigrams.gui;
  * TableSortDemo.java requires no other files.
  */
 
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,27 +48,26 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
-
 public class SortingTable extends JPanel {
 
     private static final Integer COLUMN_MARGIN = 0;
 	private JTable table;
 
-	public SortingTable() {
+	public SortingTable(List<String> columnNames, List<List<Object>> data) {
         super(new GridLayout(1,0));
 
         ArrayList<String> arrayList = new ArrayList<String>();
         ArrayList<List<Object>> arrayList2 = new ArrayList<List<Object>>();
         
-        table = new JTable(new MyTableModel(arrayList,arrayList2));
+        MyTableModel myTableModel = new MyTableModel(arrayList,arrayList2);
+        
+        table = new JTable(myTableModel);
         table.setFillsViewportHeight(true);
         table.setAutoCreateRowSorter(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+        myTableModel.setNewData(columnNames,data);
+        
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -114,7 +117,7 @@ public class SortingTable extends JPanel {
     	}
     }
 
-    class MyTableModel extends AbstractTableModel {
+    public class MyTableModel extends AbstractTableModel {
     	private List<String> columnNames;
 		private List<List<Object>> data;
     	
@@ -197,8 +200,10 @@ public class SortingTable extends JPanel {
         JFrame frame = new JFrame("TableSortDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        ArrayList arrayList = new ArrayList();
+        arrayList.add("");
         //Create and set up the content pane.
-        SortingTable newContentPane = new SortingTable();
+        SortingTable newContentPane = new SortingTable(arrayList,null);
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
 

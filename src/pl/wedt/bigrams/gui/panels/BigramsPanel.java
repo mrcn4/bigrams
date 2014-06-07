@@ -1,9 +1,7 @@
-package pl.wedt.bigrams.gui;
+package pl.wedt.bigrams.gui.panels;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,36 +18,37 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
+import pl.wedt.bigrams.gui.utils.SortingTable;
 import pl.wedt.bigrams.statsmaker.DocumentStats;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.WordStats;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
+public class BigramsPanel extends JPanel {
 
-public class WordsPanel extends JPanel{
+	private static Logger log = Logger.getLogger(BigramsPanel.class);
 
-	private static Logger log = Logger.getLogger(WordsPanel.class);
-	
-	private final String LEFT_LABEL = "Global words frequency";
+	private final String LEFT_LABEL = "Global bigrams frequency";
 	private final String CENTER_LABEL = "Document list (click to see details)";
-	private final String RIGHT_LABEL = "Word statistics for document (count,sentenceCount,tfidf)";
-	
+	private final String RIGHT_LABEL = "Bigrams statistics for document";
+
 	private final static List<String> COLUMN_NAMES_LEFT = new ArrayList<>();
 	private final static List<String> COLUMN_NAMES_RIGHT = new ArrayList<>();
 	static {
-		COLUMN_NAMES_LEFT.add("Word");
+		COLUMN_NAMES_LEFT.add("Bigram");
 		COLUMN_NAMES_LEFT.add("Count");
 		COLUMN_NAMES_LEFT.add("In Sentences");
 		COLUMN_NAMES_LEFT.add("Document count");
 		COLUMN_NAMES_LEFT.add("Document percent");
+		COLUMN_NAMES_LEFT.add("PB");
+		COLUMN_NAMES_LEFT.add("P1");
+		COLUMN_NAMES_LEFT.add("P2");
 		
-		COLUMN_NAMES_RIGHT.add("Word");
+		COLUMN_NAMES_RIGHT.add("Bigram");
 		COLUMN_NAMES_RIGHT.add("Count");
 		COLUMN_NAMES_RIGHT.add("Sentence");
 		COLUMN_NAMES_RIGHT.add("TF-IDF");
 	}
-	
+
 	private JLabel leftlabel;
 	private SortingTable leftlist;
 	
@@ -60,30 +59,31 @@ public class WordsPanel extends JPanel{
 	private SortingTable rightlist;
 	
 	List<DocumentStats> docStats;
-	
-	public WordsPanel() {
-		//init variables
+
+	public BigramsPanel() {
+		// init variables
 		docStats = new ArrayList<DocumentStats>();
-		
-		//init gui
+
+		// init gui
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-		//leftPanel
+		// leftPanel
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		add(leftPanel);
 
-		//title label
+		// title label
 		leftlabel = new JLabel(LEFT_LABEL);
 		leftPanel.add(leftlabel);
 
 		// init list on scroll pane
-		leftlist = new SortingTable();
+		leftlist = new SortingTable(COLUMN_NAMES_LEFT,null);
 		leftPanel.add(leftlist);
-		//endof leftPanel
 		
-		//centerpanel
+		// endof leftPanel
+
+		// centerpanel
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		add(centerPanel);
@@ -99,7 +99,6 @@ public class WordsPanel extends JPanel{
 				if (!e.getValueIsAdjusting()) {
 					String name = (String) centerlist.getSelectedValue();
 					updateRightListForDocumentName(name);
-					
 				}
 			}
 		});
@@ -107,9 +106,9 @@ public class WordsPanel extends JPanel{
 		JScrollPane centerpane = new JScrollPane();
 		centerpane.getViewport().add(centerlist);
 		centerPanel.add(centerpane);
-		//endof centerpanel
+		// endof centerpanel
 
-		//right panel
+		// right panel
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		add(rightPanel);
@@ -118,25 +117,29 @@ public class WordsPanel extends JPanel{
 		rightPanel.add(rightlabel);
 
 		// init list on scroll pane
-		rightlist = new SortingTable();
-		rightPanel.add(rightlist);
-		//endof rightPanel
-	}
 
+		rightlist = new SortingTable(COLUMN_NAMES_RIGHT,null);
+		rightPanel.add(rightlist);
+		
+		// endof rightPanel
+	}
 
 	private void updateRightListForDocumentName(String name) {
 		Map<String, WordStats> rightStats = null;
-		for(DocumentStats ds: docStats)
-		{
-			if(ds.getDocName().equals(name))
-			{
+		for (DocumentStats ds : docStats) {
+			if (ds.getDocName().equals(name)) {
 				rightStats = ds.getWordStats();
 				break;
 			}
 		}
+
+		if (rightStats == null) {
+			log.error("DocumentStats for " + name + " not found");
+		}
 		
 		List<List<Object>> data = new ArrayList<List<Object>>();
-
+		if(rightStats != null)
+		{
 		for (Entry<String, WordStats> me : rightStats.entrySet()) {
 			ArrayList<Object> row = new ArrayList<Object>();
 
@@ -146,9 +149,10 @@ public class WordsPanel extends JPanel{
 			row.add(me.getValue().getTfidf());
 			data.add(row);
 		}
+		}
 		updateRightList(data);
 	}
-	
+
 	private void updateLeftTable(final List<List<Object>> data) {
 		EventQueue.invokeLater(new Runnable() { 
         public void run() { 
@@ -170,13 +174,14 @@ public class WordsPanel extends JPanel{
 		    	rightlist.getModel().setNewData(COLUMN_NAMES_RIGHT, data);
 		    }});
 	}
-	
-	public void updateStats(IStatsMaker statsMaker)
-	{
-		//save for later
-		docStats = statsMaker.getDocStats();
 
-		Map<String, Long> globalCount = statsMaker.getGlobalCount();
+
+	public void updateStats(IStatsMaker statsMaker) {
+		log.debug("Updating stats " + statsMaker.getBigramCount().size());
+		// save for later
+		docStats = statsMaker.getDocBigramStats();
+
+		Map<String, Long> globalCount = statsMaker.getBigramCount();
 
 		// update left pane
 		List<List<Object>> data = new ArrayList<List<Object>>();
@@ -185,27 +190,39 @@ public class WordsPanel extends JPanel{
 			ArrayList<Object> row = new ArrayList<Object>();
 
 			row.add(me.getKey());
+
 			row.add(me.getValue());
-			row.add(statsMaker.getSentenceCount().get(me.getKey()));
-			row.add(statsMaker.getDocumentFreq().get(me.getKey()));
-			row.add(statsMaker.getDocumentFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
+
+			row.add(statsMaker.getSentenceBigramCount().get(me.getKey()));
 			
+			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey()));
+			row.add(statsMaker.getDocumentBigramFreq().get(me.getKey())*1.0/statsMaker.getDocumentCount());
+			
+			row.add((statsMaker.getSentenceBigramCount().get(me.getKey())) * 1.0
+					/ statsMaker.getGlobalSentenceCount());
+
+			String firstWord = me.getKey().split(", ")[0];
+			Long firstWordCount = statsMaker.getSentenceCount().get(firstWord);
+			row.add(firstWordCount * 1.0
+					/ statsMaker.getGlobalSentenceCount());
+
+			String secondWord = me.getKey().split(", ")[1];
+			Long secondWordCount = statsMaker.getSentenceCount().get(secondWord);
+			row.add(secondWordCount * 1.0
+					/ statsMaker.getGlobalSentenceCount());
+
 			data.add(row);
 		}
 		updateLeftTable(data);
 
-		
-		//update center pane
+		// update center pane
 		List<String> docnames = new LinkedList<String>();
-		for(DocumentStats docstat: docStats)
-		{
+		for (DocumentStats docstat : docStats) {
 			docnames.add(docstat.getDocName());
 		}
 		updateCenterList(docnames);
 	}
-	
-	void computingInProgess(boolean enable)
-	{
-		
+
+	void computingInProgess(boolean enable) {
 	}
 }
