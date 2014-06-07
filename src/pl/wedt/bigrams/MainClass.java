@@ -1,12 +1,6 @@
 package pl.wedt.bigrams;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream.GetField;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
 
 import pl.wedt.bigrams.dataprovider.DataProvider;
@@ -52,25 +46,6 @@ public class MainClass {
 		
 		new StatsMakerSerializer().writeToOutput(System.out, printStatsMaker);
 		System.exit(0);
-		
-		/*List<File> directories = new ArrayList<>();
-		directories.add(new File("testfiles"));
-		
-		String[] posFilter = {"VB", "VBG", "VBZ"};
-		
-		Properties newprops = new Properties();
-		
-		newprops.setProperty("directories", directories.toString());
-		newprops.setProperty("posfilter", Arrays.toString(posFilter));
-		
-		try {
-			FileOutputStream fos = new FileOutputStream(new File("config.properties"));
-			newprops.storeToXML(fos, "");
-		} catch (Exception e) {
-			System.err.println("Oh my.");
-		}
-		
-		return; */
 	}
 
 }

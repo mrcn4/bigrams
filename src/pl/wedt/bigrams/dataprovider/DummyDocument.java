@@ -1,6 +1,5 @@
 package pl.wedt.bigrams.dataprovider;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ public class DummyDocument implements IDocument {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "DummyDocument";
 	}
 

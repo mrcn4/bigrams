@@ -17,9 +17,6 @@ public class Document implements IDocument {
 		this.f = f;
 	}
 	
-	/* (non-Javadoc)
-	 * @see pl.wedt.bigrams.dataprovider.IDocument#getName()
-	 */
 	@Override
 	public String getName()
 	{
@@ -61,9 +58,6 @@ public class Document implements IDocument {
 		return text;
 	}
 	
-	/* (non-Javadoc)
-	 * @see pl.wedt.bigrams.dataprovider.IDocument#getSentences()
-	 */
 	@Override
 	public List<Sentence> getSentences()
 	{

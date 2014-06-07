@@ -2,8 +2,12 @@ package pl.wedt.bigrams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -16,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -34,8 +39,10 @@ import pl.wedt.bigrams.statsmaker.BasicFormStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
 import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
 import pl.wedt.bigrams.statsmaker.RawFormStatsMaker;
+import pl.wedt.bigrams.statsmaker.StatsMakerSerializer;
 
 public class BigramsGUI extends JFrame {
+	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger log = Logger.getLogger(BigramsGUI.class);
@@ -47,6 +54,9 @@ public class BigramsGUI extends JFrame {
 			+ "Tooltips contains help for POS symbols.";
 	private static final String MENU_RUN_RAW = "Run for raw form of word";
 	private static final String MENU_RUN_BASIC = "Run for basic form of word";
+	private static final String MENU_RUN_RAW_FILE = "Run for raw form of word and save to file...";
+	private static final String MENU_RUN_BASIC_FILE = "Run for basic form of word and save to file...";
+	private static final String MENU_SAVE = "Save results to file...";
 	private static final String MENU_STOP = "Stop";
 	private static final String MENU_CHOOSE_POS = "Choose POS...";
 	private static final String MENU_EXIT = "Exit";
@@ -58,25 +68,30 @@ public class BigramsGUI extends JFrame {
 	private static final String STATUS_COMPUTATION_STARTS = "Computation has started. Wait for results...";
 	private static final String STATUS_COMPUTATION_ENDS = "Computation has ended. You can view results now.";
 	private static final Integer UPDATE_STATUS_EVERY = 2000;
-
+	
 	// GUI objects
 	private WordsPanel wordsPanel;
 	private BigramsPanel bigramsPanel;
 	private AllPairBigramsPanel allPairBigramsPanel;
 	private JLabel statusLabel;
+	private JMenuItem menuRaw;
+	private JMenuItem menuBasic;
+	private JMenuItem menuStop;
 
 	// dependent objects
 	private IStatsMaker statsMaker;
 	private List<String> choosenPOS = POS.getDefaultPOS();
-
-	private JMenuItem menuRaw;
-
-	private JMenuItem menuBasic;
-
 	ScheduledExecutorService exec = Executors
 			.newSingleThreadScheduledExecutor();
+	private boolean saveToFile=false;
+	private String filepath = "";
+	private String configPath= "config.properties";
 
-	private JMenuItem menuStop;
+	private JMenuItem menuRawF;
+
+	private JMenuItem menuBasicF;
+
+	private JMenuItem menuSave;	
 
 	public BigramsGUI(final IStatsMaker statsMaker) {
 		this.statsMaker = statsMaker;
@@ -115,8 +130,15 @@ public class BigramsGUI extends JFrame {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				setStatus("Updating UI...");
-				updatePanels();
+				if(!saveToFile)
+				{
+					setStatus("Updating UI...");
+					updatePanels();
+				}
+				else
+				{
+					writeStatsToFile(filepath);
+				}
 				switchGUIWhileComputing(false);
 				if (statsMaker.isStopFlag()) {
 					setStatus("Computation stopped! Analysed "
@@ -125,7 +147,6 @@ public class BigramsGUI extends JFrame {
 				}
 
 			}
-
 		});
 		thread.start();
 		exec = Executors.newSingleThreadScheduledExecutor();
@@ -142,6 +163,17 @@ public class BigramsGUI extends JFrame {
 				/ statsMaker.getDocumentCount() + "%");
 	}
 
+
+	private void writeStatsToFile(String filepath) {
+		setStatus("Writing results to " + filepath + "...");
+		StatsMakerSerializer statsMakerSerializer = new StatsMakerSerializer();
+		try {
+			statsMakerSerializer.writeToOutput(new FileOutputStream(filepath), statsMaker);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Unable to open file to read: " + filepath);
+		}
+	}
+	
 	/**
 	 * Makes necesarry changes in GUI while computing
 	 * 
@@ -154,17 +186,25 @@ public class BigramsGUI extends JFrame {
 			setStatus(STATUS_COMPUTATION_STARTS);
 			menuRaw.setEnabled(false);
 			menuBasic.setEnabled(false);
+			menuRawF.setEnabled(false);
+			menuBasicF.setEnabled(false);
+			menuSave.setEnabled(false);
 			menuStop.setEnabled(true);
+			
 		} else {
 			setStatus(STATUS_COMPUTATION_ENDS);
 			menuRaw.setEnabled(true);
 			menuBasic.setEnabled(true);
+			menuRawF.setEnabled(true);
+			menuBasicF.setEnabled(true);
+			menuSave.setEnabled(true);
 			menuStop.setEnabled(false);
 		}
 	}
 
 	private void setStatus(String status) {
 		statusLabel.setText(status);
+		log.debug("Status set to: " + status);
 	}
 
 	private JPanel statusBar() {
@@ -181,15 +221,67 @@ public class BigramsGUI extends JFrame {
 	private void menuAction(String action) {
 		switch (action) {
 		case MENU_RUN_RAW:
-			statsMaker = new RawFormStatsMaker(new DataProvider("config.properties"));
+			saveToFile = false;
+			statsMaker = new RawFormStatsMaker(new DataProvider(configPath));
 			computeStats();
 			break;
 		case MENU_RUN_BASIC:
-			statsMaker = new BasicFormStatsMaker(new DataProvider("config.properties"));
+			saveToFile = false;
+			statsMaker = new BasicFormStatsMaker(new DataProvider(configPath));
 			computeStats();
 			break;
 		case MENU_STOP:
 			computeStop();
+			break;
+		case MENU_RUN_BASIC_FILE:
+			saveToFile = true;
+			FileDialog fd = new FileDialog(this, "Choose a file", FileDialog.SAVE);
+			fd.setVisible(true);
+			String filename = fd.getDirectory()+File.separator+fd.getFile();
+			if (filename == null)
+			{
+				log.debug("Cancelled the choice");
+			}
+			else
+			{
+				this.filepath = filename;
+				log.debug("Choosen filename is " + filepath);
+				statsMaker = new BasicFormStatsMaker(new DataProvider(configPath));
+				computeStats();
+			}
+			
+			break;
+		case MENU_RUN_RAW_FILE:
+			saveToFile = true;
+			FileDialog fdr = new FileDialog(this, "Choose a file", FileDialog.SAVE);
+			fdr.setVisible(true);
+			String filenamer = fdr.getDirectory()+File.separator+fdr.getFile();
+			if (filenamer == null)
+			{
+				log.debug("Cancelled the choice");
+			}
+			else
+			{
+				this.filepath = filenamer;
+				log.debug("Choosen filename is " + filepath);
+				statsMaker = new RawFormStatsMaker(new DataProvider(configPath));
+				computeStats();
+			}
+			
+			break;
+		case MENU_SAVE:
+			FileDialog fds = new FileDialog(this, "Choose a file", FileDialog.SAVE);
+			fds.setVisible(true);
+			String filenames = fds.getDirectory()+File.separator+fds.getFile();
+			if (filenames == null)
+			{
+				log.debug("Cancelled the choice");
+			}
+			else
+			{
+				log.debug("Choosen filename is " + filenames);
+				writeStatsToFile(filenames);
+			}
 			break;
 		case MENU_CHOOSE_POS:
 			List<String> selectedPOS = ListDialog.showDialog(this,
@@ -233,10 +325,23 @@ public class BigramsGUI extends JFrame {
 		fileMenu.add(menuBasic);
 		menuBasic.addActionListener(menuActionListener);
 
+		menuRawF = new JMenuItem(MENU_RUN_RAW_FILE);
+		fileMenu.add(menuRawF);
+		menuRawF.addActionListener(menuActionListener);
+		
+		menuBasicF = new JMenuItem(MENU_RUN_BASIC_FILE);
+		fileMenu.add(menuBasicF);
+		menuBasicF.addActionListener(menuActionListener);
+		
+		
 		menuStop = new JMenuItem(MENU_STOP);
 		fileMenu.add(menuStop);
 		menuStop.addActionListener(menuActionListener);
 		menuStop.setEnabled(false);
+		
+		menuSave = new JMenuItem(MENU_SAVE);
+		fileMenu.add(menuSave);
+		menuSave.addActionListener(menuActionListener);
 		
 		item = new JMenuItem(MENU_CHOOSE_POS);
 		fileMenu.add(item);
@@ -271,7 +376,6 @@ public class BigramsGUI extends JFrame {
 
 	public static void main(String[] args) {
 		run(new PrintStatsMaker(new DataProvider("config.properties")));
-		// run(new DummyStatsMaker());
 	}
 
 	private static void run(final IStatsMaker statsMaker) {

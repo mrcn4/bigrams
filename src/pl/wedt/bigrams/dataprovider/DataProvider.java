@@ -33,9 +33,6 @@ public class DataProvider implements IDataProvider {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see pl.wedt.bigrams.dataprovider.IDataProvider#getDocuments()
-	 */
 	@Override
 	public List<IDocument> getDocuments()
 	{
@@ -55,9 +52,6 @@ public class DataProvider implements IDataProvider {
 		return listOfDocs;
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.wedt.bigrams.dataprovider.IDataProvider#getPosFilterList()
-	 */
 	@Override
 	public List<String> getPosFilterList() {
 		return posFilterList;

@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.sound.midi.InvalidMidiDataException;
-
-import pl.wedt.bigrams.dataprovider.Document;
 import pl.wedt.bigrams.dataprovider.IDataProvider;
 import pl.wedt.bigrams.dataprovider.IDocument;
 import pl.wedt.bigrams.dataprovider.Sentence;
