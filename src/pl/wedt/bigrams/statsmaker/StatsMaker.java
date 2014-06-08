@@ -133,14 +133,15 @@ public abstract class StatsMaker implements IStatsMaker {
 					
 					if (lastWord != null) {
 						globalBigramCount++;
-						uniqueBigrams.add(getBigram(w, lastWord));
-						uniqueSentenceBigrams.add(getBigram(w, lastWord));
-						Long bigramGlobalCount = bigramCount.get(getBigram(w, lastWord));
+						String bigram = new String(getWord(lastWord) + ", " + getWord(w));
+						uniqueBigrams.add(bigram);
+						uniqueSentenceBigrams.add(bigram);
+						Long bigramGlobalCount = bigramCount.get(bigram);
 						if (bigramGlobalCount == null) {
 							bigramGlobalCount = 0L;
 						}
-						bigramCount.put(getBigram(w, lastWord), bigramGlobalCount+1);
-						WordStats bs = dbs.getWordStats().get(getBigram(w, lastWord));
+						bigramCount.put(bigram, bigramGlobalCount+1);
+						WordStats bs = dbs.getWordStats().get(bigram);
 						if (bs == null) {
 							bs = new WordStats();
 						}
@@ -149,7 +150,7 @@ public abstract class StatsMaker implements IStatsMaker {
 							bigramDocumentCount = 0L;
 						}
 						bs.setWordCount(bigramDocumentCount+1);
-						dbs.getWordStats().put(getBigram(w, lastWord), bs);
+						dbs.getWordStats().put(bigram, bs);
 					}
 					
 					lastWord = w;
