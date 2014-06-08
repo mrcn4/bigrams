@@ -121,7 +121,7 @@ public class ListDialog extends JDialog
                        List<String> initialValues,
                        String longValue) {
         super(frame, title, true);
- 
+        this.setMinimumSize(new Dimension(320,240));
         //Create and initialize the buttons.
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(this);

@@ -56,6 +56,7 @@ public class BigramsGUI extends JFrame {
 	private static final String MENU_RUN_BASIC = "Run for basic form of word";
 	private static final String MENU_RUN_RAW_FILE = "Run for raw form of word and save to file...";
 	private static final String MENU_RUN_BASIC_FILE = "Run for basic form of word and save to file...";
+	private static final String MENU_LOAD_CONFIG = "Load XML configuration file...";
 	private static final String MENU_SAVE = "Save results to file...";
 	private static final String MENU_STOP = "Stop";
 	private static final String MENU_CHOOSE_POS = "Choose POS...";
@@ -68,7 +69,7 @@ public class BigramsGUI extends JFrame {
 	private static final String STATUS_COMPUTATION_STARTS = "Computation has started. Wait for results...";
 	private static final String STATUS_COMPUTATION_ENDS = "Computation has ended. You can view results now.";
 	private static final Integer UPDATE_STATUS_EVERY = 2000;
-	
+
 	// GUI objects
 	private WordsPanel wordsPanel;
 	private BigramsPanel bigramsPanel;
@@ -86,16 +87,24 @@ public class BigramsGUI extends JFrame {
 	private boolean saveToFile=false;
 	private String filepath = "";
 	private String configPath= "config.properties";
-
+	private DataProvider dp = null;
+	
 	private JMenuItem menuRawF;
 
 	private JMenuItem menuBasicF;
 
-	private JMenuItem menuSave;	
+	private JMenuItem menuSave;
+
+	private JMenuItem menuLoad;
+
+	private JMenuItem menuPOS;	
 
 	public BigramsGUI(final IStatsMaker statsMaker) {
 		this.statsMaker = statsMaker;
 		initUI();
+		setStatus("Choosen configuration file is now: " + configPath);
+		dp = new DataProvider(configPath);
+		choosenPOS = dp.getPosFilterList();
 	}
 
 	/**
@@ -189,6 +198,8 @@ public class BigramsGUI extends JFrame {
 			menuRawF.setEnabled(false);
 			menuBasicF.setEnabled(false);
 			menuSave.setEnabled(false);
+			menuLoad.setEnabled(false);
+			menuPOS.setEnabled(false);
 			menuStop.setEnabled(true);
 			
 		} else {
@@ -198,6 +209,8 @@ public class BigramsGUI extends JFrame {
 			menuRawF.setEnabled(true);
 			menuBasicF.setEnabled(true);
 			menuSave.setEnabled(true);
+			menuLoad.setEnabled(true);
+			menuPOS.setEnabled(true);
 			menuStop.setEnabled(false);
 		}
 	}
@@ -238,7 +251,7 @@ public class BigramsGUI extends JFrame {
 			FileDialog fd = new FileDialog(this, "Choose a file", FileDialog.SAVE);
 			fd.setVisible(true);
 			String filename = fd.getDirectory()+File.separator+fd.getFile();
-			if (filename == null)
+			if (fd.getFile() == null)
 			{
 				log.debug("Cancelled the choice");
 			}
@@ -256,7 +269,7 @@ public class BigramsGUI extends JFrame {
 			FileDialog fdr = new FileDialog(this, "Choose a file", FileDialog.SAVE);
 			fdr.setVisible(true);
 			String filenamer = fdr.getDirectory()+File.separator+fdr.getFile();
-			if (filenamer == null)
+			if (fdr.getFile() == null)
 			{
 				log.debug("Cancelled the choice");
 			}
@@ -273,7 +286,7 @@ public class BigramsGUI extends JFrame {
 			FileDialog fds = new FileDialog(this, "Choose a file", FileDialog.SAVE);
 			fds.setVisible(true);
 			String filenames = fds.getDirectory()+File.separator+fds.getFile();
-			if (filenames == null)
+			if (fds.getFile() == null)
 			{
 				log.debug("Cancelled the choice");
 			}
@@ -281,6 +294,23 @@ public class BigramsGUI extends JFrame {
 			{
 				log.debug("Choosen filename is " + filenames);
 				writeStatsToFile(filenames);
+			}
+			break;
+		case MENU_LOAD_CONFIG:
+			FileDialog fdc = new FileDialog(this, "Choose config", FileDialog.LOAD);
+			fdc.setVisible(true);
+			String tempConfigPath = fdc.getDirectory()+File.separator+fdc.getFile();
+			if (fdc.getFile() == null)
+			{
+				log.debug("Cancelled the choice");
+			}
+			else
+			{
+				log.debug("Choosen configuration file is now: " + tempConfigPath);
+				setStatus("Choosen configuration file is now: " + tempConfigPath);
+				configPath = tempConfigPath;
+				dp = new DataProvider(configPath);
+				choosenPOS = dp.getPosFilterList();
 			}
 			break;
 		case MENU_CHOOSE_POS:
@@ -305,7 +335,7 @@ public class BigramsGUI extends JFrame {
 	}
 
 	private void initUI() {
-
+		this.setMinimumSize(new Dimension(500,500));
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("Menu");
 
@@ -332,7 +362,10 @@ public class BigramsGUI extends JFrame {
 		menuBasicF = new JMenuItem(MENU_RUN_BASIC_FILE);
 		fileMenu.add(menuBasicF);
 		menuBasicF.addActionListener(menuActionListener);
-		
+
+		menuLoad = new JMenuItem(MENU_LOAD_CONFIG);
+		fileMenu.add(menuLoad);
+		menuLoad.addActionListener(menuActionListener);
 		
 		menuStop = new JMenuItem(MENU_STOP);
 		fileMenu.add(menuStop);
@@ -343,9 +376,9 @@ public class BigramsGUI extends JFrame {
 		fileMenu.add(menuSave);
 		menuSave.addActionListener(menuActionListener);
 		
-		item = new JMenuItem(MENU_CHOOSE_POS);
-		fileMenu.add(item);
-		item.addActionListener(menuActionListener);
+		menuPOS = new JMenuItem(MENU_CHOOSE_POS);
+		fileMenu.add(menuPOS);
+		menuPOS.addActionListener(menuActionListener);
 
 		item = new JMenuItem(MENU_EXIT);
 		fileMenu.add(item);
