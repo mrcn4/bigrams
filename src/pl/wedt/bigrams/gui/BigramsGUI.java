@@ -37,7 +37,7 @@ import pl.wedt.bigrams.gui.panels.WordsPanel;
 import pl.wedt.bigrams.gui.utils.ListDialog;
 import pl.wedt.bigrams.statsmaker.BasicFormStatsMaker;
 import pl.wedt.bigrams.statsmaker.IStatsMaker;
-import pl.wedt.bigrams.statsmaker.PrintStatsMaker;
+import pl.wedt.bigrams.statsmaker.StatsMaker;
 import pl.wedt.bigrams.statsmaker.RawFormStatsMaker;
 import pl.wedt.bigrams.statsmaker.StatsMakerSerializer;
 
@@ -99,7 +99,7 @@ public class BigramsGUI extends JFrame {
 
 	private JMenuItem menuPOS;	
 
-	public BigramsGUI(final IStatsMaker statsMaker) {
+	public BigramsGUI() {
 		this.statsMaker = statsMaker;
 		initUI();
 		setStatus("Choosen configuration file is now: " + configPath);
@@ -408,14 +408,14 @@ public class BigramsGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		run(new PrintStatsMaker(new DataProvider("config.properties")));
+		run();
 	}
 
-	private static void run(final IStatsMaker statsMaker) {
+	private static void run() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				BigramsGUI ex = new BigramsGUI(statsMaker);
+				BigramsGUI ex = new BigramsGUI();
 				ex.setVisible(true);
 			}
 		});

@@ -12,7 +12,7 @@ import pl.wedt.bigrams.dataprovider.IDocument;
 import pl.wedt.bigrams.dataprovider.Sentence;
 import pl.wedt.bigrams.dataprovider.Word;
 
-public class PrintStatsMaker implements IStatsMaker {
+public abstract class StatsMaker implements IStatsMaker {
 	private IDataProvider dp;
 	private Long globalSentenceCount;
 	private List<String> posFilter;
@@ -40,7 +40,7 @@ public class PrintStatsMaker implements IStatsMaker {
 	private Map<String, Long> documentFunnyBigramFreq;
 	private Long globalFunnyBigramCount;
 
-	public PrintStatsMaker(IDataProvider dp) {
+	public StatsMaker(IDataProvider dp) {
 		this.dp = dp;
 		this.globalSentenceCount = 0L;
 		this.posFilter = new ArrayList<>();

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import pl.wedt.bigrams.StanfordLemmatizer;
 import edu.stanford.nlp.util.CoreMap;
 
 public class Document implements IDocument {

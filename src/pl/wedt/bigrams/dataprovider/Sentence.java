@@ -3,7 +3,6 @@ package pl.wedt.bigrams.dataprovider;
 import java.util.LinkedList;
 import java.util.List;
 
-import pl.wedt.bigrams.StanfordLemmatizer;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 

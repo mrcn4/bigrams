@@ -1,4 +1,4 @@
-package pl.wedt.bigrams;
+package pl.wedt.bigrams.dataprovider;
 
 import java.util.LinkedList;
 import java.util.List;
