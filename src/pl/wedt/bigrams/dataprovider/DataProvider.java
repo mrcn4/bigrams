@@ -21,16 +21,17 @@ public class DataProvider implements IDataProvider {
 		try {
 			FileInputStream fis = new FileInputStream(new File(XMLFilepath));
 			newprops.loadFromXML(fis);
+
+			for (String path : newprops.getProperty("directories").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
+				directories.add(new File(path));
+			}
+			for (String pos : newprops.getProperty("posfilter").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
+				posFilterList.add(pos);
+			}
 		} catch (Exception e) {
-			System.err.println("Oh my.");
+			posFilterList = POS.getDefaultPOS();
 		}
 		
-		for (String path : newprops.getProperty("directories").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
-			directories.add(new File(path));
-		}
-		for (String pos : newprops.getProperty("posfilter").replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
-			posFilterList.add(pos);
-		}
 	}
 	
 	@Override

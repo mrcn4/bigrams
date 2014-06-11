@@ -82,8 +82,7 @@ public class BigramsGUI extends JFrame {
 	// dependent objects
 	private IStatsMaker statsMaker;
 	private List<String> choosenPOS = POS.getDefaultPOS();
-	ScheduledExecutorService exec = Executors
-			.newSingleThreadScheduledExecutor();
+	ScheduledExecutorService exec = null;
 	private boolean saveToFile=false;
 	private String filepath = "";
 	private String configPath= "config.properties";
@@ -102,8 +101,12 @@ public class BigramsGUI extends JFrame {
 	public BigramsGUI() {
 		this.statsMaker = statsMaker;
 		initUI();
-		setStatus("Choosen configuration file is now: " + configPath);
+		setStatus("Choosen configuration file: " + configPath);
 		dp = new DataProvider(configPath);
+		if(dp.getDocuments().size() <= 0)
+		{
+			setStatus("No files found in directories defined in configuration file " + configPath + " (check your configuration file)");
+		}
 		choosenPOS = dp.getPosFilterList();
 	}
 
@@ -164,7 +167,7 @@ public class BigramsGUI extends JFrame {
 			public void run() {
 				updateProgress();
 			}
-		}, 0, UPDATE_STATUS_EVERY, TimeUnit.MILLISECONDS);
+		}, UPDATE_STATUS_EVERY, UPDATE_STATUS_EVERY, TimeUnit.MILLISECONDS);
 	}
 
 	protected void updateProgress() {
