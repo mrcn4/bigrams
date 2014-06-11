@@ -49,6 +49,31 @@
 				</executions>
       </plugin>
       <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
+          <executions>
+              <execution>
+                  <id>copy-config</id> 
+				  <phase>package</phase>
+                  <goals>
+                      <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                      <outputDirectory>${package.output.dir}/</outputDirectory>
+                      <resources>
+                          <resource>
+                              <directory>src</directory>
+                              <filtering>true</filtering>
+                              <includes>
+                                  <include>*.xml</include>
+                              </includes>
+                          </resource>
+                      </resources>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.0</version>
         <configuration>
@@ -57,6 +82,15 @@
         </configuration>
       </plugin>
     </plugins>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
   </build>
   <dependencies>
 	<dependency>
